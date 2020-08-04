@@ -11,7 +11,11 @@ import time
 import random
 import json
 import requests
-
+import os
+import sys
+import urllib.request
+client_id = "au7Pqz4nAV0GdI9eHWVg" # 개발자센터에서 발급받은 Client ID 값
+client_secret = "FTTueiV1Gy" # 개발자센터에서 발급받은 Client Secret 값
 
 @api_view(['POST'])
 def nlpSong(request):
@@ -31,12 +35,25 @@ def getSongs(request):
     songs = crawling()
     res = []
 
+    kkma = Kkma()
     for song in songs:
         lyric = song[3]
 
         if isHangel(lyric) >= 0.6:
             song.append(nlp(lyric))
-            song_obj = Song(title=song[0], singer=song[1], album=song[2], lyrics=song[3], nlp_lyrics=song[4])
+            translate = []
+            origin = []
+            for line in kkma.sentences(lyric): # json value 접근
+                origin.append(line)
+                trans = papago(line)
+                if trans is None:
+                    trans.append("")
+                else:
+                    translate.append(trans)
+
+            song.append(translate)
+            song.append(origin)
+            song_obj = Song(title=song[0], singer=song[1], album=song[2], lyrics=song[3], nlp_lyrics=song[4], trans=song[5], origin=song[6])
             res.append(SongSerializer(song_obj).data)
 
     return Response(res)
@@ -115,6 +132,23 @@ def nlp(lyrics):
             res.append(word)
     return res
 
+def papago(lyric):
+    encText = urllib.parse.quote(lyric)
+    data = "source=ko&target=en&text=" + encText
+    url = "https://openapi.naver.com/v1/papago/n2mt"
+    request = urllib.request.Request(url)
+    request.add_header("X-Naver-Client-Id",client_id)
+    request.add_header("X-Naver-Client-Secret",client_secret)
+    response = urllib.request.urlopen(request, data=data.encode("utf-8"))
+    rescode = response.getcode()
+    if(rescode==200):
+        response_body = response.read()
+        res = response_body.decode('utf-8')
+        result = json.loads(res)
+        return result['message']['result']['translatedText']
+    else:
+        print("Error Code:" + rescode)
+        return None
 
 def isHangel(str): # 한글이 몇 퍼센트의 비율로 들어가있는지 판단
     pattern = re.compile('[가-힣]+')
