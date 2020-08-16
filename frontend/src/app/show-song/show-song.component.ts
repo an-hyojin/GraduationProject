@@ -1,0 +1,35 @@
+import { Component, OnInit } from '@angular/core';
+import { environment } from 'src/environments/environment';
+import { Headers, Http, RequestOptions } from '@angular/http';
+import { Observable } from 'rxjs';
+import { Song } from 'src/models/song';
+
+@Component({
+  selector: 'app-show-song',
+  templateUrl: './show-song.component.html',
+  styleUrls: ['./show-song.component.scss'],
+})
+export class ShowSongComponent implements OnInit {
+  private apiBaseUrl = environment.apiBaseUrl;
+  song: Song;
+  constructor(private http: Http) {}
+
+  nlp(): Observable<any> {
+    // angular - node js - django 연결 샘플
+    let body = { title: '10점 만점에 10점' };
+    let headers = new Headers({
+      'Cache-Control': 'no-cache',
+    });
+    let options = new RequestOptions({
+      headers: headers,
+    });
+    return this.http.post(`${this.apiBaseUrl}/songs`, body, options);
+  }
+
+  ngOnInit(): void {
+    this.nlp().subscribe((v) => {
+      console.log(JSON.parse(v._body)[0]);
+      this.song = Song.parseFrom(JSON.parse(v._body)[0]);
+    });
+  }
+}

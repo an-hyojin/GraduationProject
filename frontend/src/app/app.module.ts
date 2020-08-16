@@ -4,10 +4,12 @@ import { NgModule } from '@angular/core';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HttpModule } from '@angular/http';
+import { ShowSongComponent } from './show-song/show-song.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    ShowSongComponent
   ],
   imports: [
     BrowserModule,
@@ -17,4 +19,5 @@ import { HttpModule } from '@angular/http';
   providers: [],
   bootstrap: [AppComponent]
 })
+
 export class AppModule { }

@@ -9,18 +9,10 @@ import { Observable } from 'rxjs';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  private apiBaseUrl = environment.apiBaseUrl;
-  private headers = new Headers({'Content-Type':'application/json'});
   
   constructor(private http:Http){
-    this.nlp().subscribe(v=>{
-      console.log(v);
-    })
+    ;
    }
-
-  nlp():Observable<any> { // angular - node js - django 연결 샘플
-    return this.http.get(`${this.apiBaseUrl}/songs`);
-  }
 
   ngOnInit(): void {
   
