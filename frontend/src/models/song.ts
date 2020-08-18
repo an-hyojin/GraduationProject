@@ -1,5 +1,6 @@
 export class Song {
-  public title: string;
+  title: string;
+  id: string;
   singer: string;
   sentences: [string];
   translation: [string];
@@ -11,7 +12,9 @@ export class Song {
   album: string;
   static parseFrom(json): Song {
     const o: Song = new Song();
+    o.id = json._id;
     o.title = json.title;
+
     o.singer = json.singer;
     o.album = json.album;
     o.sentences = json.sentences;

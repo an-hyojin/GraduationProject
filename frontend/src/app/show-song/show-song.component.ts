@@ -3,6 +3,7 @@ import { environment } from 'src/environments/environment';
 import { Headers, Http, RequestOptions } from '@angular/http';
 import { Observable } from 'rxjs';
 import { Song } from 'src/models/song';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-show-song',
@@ -12,11 +13,11 @@ import { Song } from 'src/models/song';
 export class ShowSongComponent implements OnInit {
   private apiBaseUrl = environment.apiBaseUrl;
   song: Song;
-  constructor(private http: Http) {}
-
-  nlp(): Observable<any> {
+  constructor(private http: Http, private route: ActivatedRoute) {}
+  title: String;
+  getSong(): Observable<any> {
     // angular - node js - django 연결 샘플
-    let body = { title: '10점 만점에 10점' };
+    let body = { title: this.title };
     let headers = new Headers({
       'Cache-Control': 'no-cache',
     });
@@ -27,8 +28,8 @@ export class ShowSongComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.nlp().subscribe((v) => {
-      console.log(JSON.parse(v._body)[0]);
+    this.title = this.route.snapshot.paramMap.get('title');
+    this.getSong().subscribe((v) => {
       this.song = Song.parseFrom(JSON.parse(v._body)[0]);
     });
   }
