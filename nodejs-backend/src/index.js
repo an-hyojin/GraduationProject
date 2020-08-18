@@ -25,11 +25,13 @@ mongoose.connect(process.env.MONGO_URI, {
     usemongoClient:true
 }).then(
     (response) => {
+        console.log('연결');
         console.log('Successfully connected to mongodb');
     }
 ).catch(e => {
     console.error(e);
 });
+
 
 const port = process.env.PORT || 4000; // PORT 값이 설정되어있지 않다면 4000 을 사용합니다.
 
@@ -42,6 +44,4 @@ app.use(router.allowedMethods());
 app.listen(port, () => {
     console.log('heurm server is listening to port ' + port);
 });
-
-
 const scheduler = require('./batch') // 스케쥴러 설정

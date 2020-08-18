@@ -1,94 +1,89 @@
-const Song = require('../../models/song');
+const Song = require("../../models/song");
 
 exports.list = async (ctx) => {
-    let songs;
-    try {
-        songs = await Song.find().exec();
-    } catch{
-        return ctx.throw(500, e);
-    }
-
-    ctx.body = songs; 
+  let songs;
+  try {
+    songs = await Song.find({}, { singer: 1, title: 1, _id: 1 }).exec();
+  } catch {
+    return ctx.throw(500, e);
+  }
+  ctx.body = songs;
 };
 
-exports.get = async (ctx) => {
-    const { id } = ctx.params;
+exports.post = async (ctx) => {
+  console.log(ctx);
+  const { title } = ctx.request.body;
 
-    let song;
+  let song;
 
-    try{
-        song = await Song.findById(id).exec();
-    } catch(e) {
-        return ctx.throw(500, e);
-    }
-
-    if(!song) {
-        ctx.status = 404;
-        ctx.body = { message : 'song not found' };
-        return;
-    }
-
-    ctx.body = song;
+  try {
+    song = await Song.find({ title: title }).exec();
+  } catch (e) {
+    return ctx.throw(500, e);
+  }
+  if (!song) {
+    ctx.status = 404;
+    ctx.body = { message: "song not found" };
+    return;
+  }
+  ctx.body = song;
 };
-
+/*
 exports.create = async (ctx) => {
-    const {
-        title,
-        singer,
-        lyrics
-    } = ctx.request.body;
+  const { title, singer, lyrics } = ctx.request.body;
 
-    const song = new Song({
-        title,
-        singer,
-        lyrics
-    });
+  const song = new Song({
+    title,
+    singer,
+    lyrics,
+  });
 
-    try{
-        await song.save();
-    }catch(e){
-        return ctx.throw(500, e);
-    }
+  try {
+    await song.save();
+  } catch (e) {
+    return ctx.throw(500, e);
+  }
 
-    ctx.body = song;
-}
+  ctx.body = song;
+};
 
 exports.delete = async (ctx) => {
-    const { id } = ctx.params;
+  const { id } = ctx.params;
 
-    try {
-        await Book.findByIdAndRemove(id).exec();
-    } catch (e) {
-        if(e.name === 'CastError') {
-            ctx.status = 400;
-            return;
-        }
+  try {
+    await Book.findByIdAndRemove(id).exec();
+  } catch (e) {
+    if (e.name === "CastError") {
+      ctx.status = 400;
+      return;
     }
+  }
 
-    ctx.status = 204;
+  ctx.status = 204;
 };
 
 exports.replace = (ctx) => {
-   ctx.body = 'replaced';
+  ctx.body = "replaced";
 };
 
 exports.update = async (ctx) => {
-    const { id } = ctx.params;
+  const { id } = ctx.params;
 
-    if(!ObjectId.isValid(id)) {
-        ctx.status = 400;
-        return;
-    }
+  if (!ObjectId.isValid(id)) {
+    ctx.status = 400;
+    return;
+  }
 
-    let song;
+  let song;
 
-    try {
-        song = await Song.findByIdAndUpdate(id, ctx.request.body, {
-            new: true
-        });
-    } catch (e) {
-        return ctx.throw(500, e);
-    }
+  try {
+    song = await Song.findByIdAndUpdate(id, ctx.request.body, {
+      new: true,
+    });
+  } catch (e) {
+    return ctx.throw(500, e);
+  }
 
-    ctx.body = song;
+  ctx.body = song;
 };
+*/
