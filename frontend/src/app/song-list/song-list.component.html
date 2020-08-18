@@ -1,0 +1,6 @@
+<p>song-list works!</p>
+<ol>
+  <li *ngFor="let song of songInfos" (click)="goSong(song.title)">
+    {{ song.singer }} - {{ song.title }}
+  </li>
+</ol>
