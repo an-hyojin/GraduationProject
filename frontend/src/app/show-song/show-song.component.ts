@@ -16,7 +16,7 @@ export class ShowSongComponent implements OnInit {
   constructor(private http: Http, private route: ActivatedRoute) {}
   title: String;
   getSong(): Observable<any> {
-    // angular - node js - django 연결 샘플
+    // 노래 정보 가져오기
     let body = { title: this.title };
     let headers = new Headers({
       'Cache-Control': 'no-cache',

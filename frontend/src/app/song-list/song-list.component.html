@@ -1,6 +1,7 @@
-<p>song-list works!</p>
-<ol>
-  <li *ngFor="let song of songInfos" (click)="goSong(song.title)">
+<h3>TOP10</h3>
+
+<ul class="list-group mt-4">
+  <li class="list-group-item list-group-item-action"  *ngFor="let song of songInfos" (click)="goSong(song.title)">
     {{ song.singer }} - {{ song.title }}
   </li>
-</ol>
+</ul>
