@@ -1,11 +1,21 @@
 
-<div class="row">
-<div class="col-sm mt-2 ">
+<div class="row container-fixed mt-3">
+<div class="song-list col-sm-4 h-100">
 <app-song-list></app-song-list>
 </div>
-<div  class="col-sm">Search</div>
-<div  class="col-sm">
-<app-user-info></app-user-info>
-<app-login></app-login>
+<div class="search col-sm-4 h-100">
+    <app-song-search></app-song-search>
+
+</div>
+<div class="user-info col-sm-4 h-100">
+    <div class="row justify-content-center">
+        <div class="col-md-auto">
+            <app-user-info></app-user-info>
+        </div>
+        <div class="col-md-auto mt-3">
+            <app-login></app-login>
+        </div>
+
+</div>
 </div>
 </div>

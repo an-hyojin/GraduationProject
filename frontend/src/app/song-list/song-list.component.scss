@@ -1,0 +1,30 @@
+@import '../../variable.scss';
+.table-item{
+    .rank{
+        width:55px;
+    }
+}
+.table{
+    width:100%;
+}
+.table-item:hover{
+    background-color:$light-gray;
+    height: $expand-tr;
+    .rank{
+        font-size:1.5em;
+    }
+    .info{
+       
+        .singer, .title {
+            display: block;
+            flex:auto;
+            max-width: none;
+
+        }
+        .title{
+            font-weight:bold;
+            font-size:1.2em;
+        }
+    }
+    
+}

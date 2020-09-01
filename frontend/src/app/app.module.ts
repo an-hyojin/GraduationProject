@@ -9,10 +9,16 @@ import { SongListComponent } from './song-list/song-list.component';
 import { MainComponent } from './main/main.component';
 import { LoginComponent } from './login/login.component';
 import { UserInfoComponent } from './user-info/user-info.component';
-
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatInputModule} from '@angular/material/input';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import {MatIconModule} from '@angular/material/icon';
+import {MatButtonModule} from '@angular/material/button';
+import { SongSearchComponent } from './song-search/song-search.component';
 @NgModule({
-  declarations: [AppComponent, ShowSongComponent, SongListComponent, MainComponent, LoginComponent, UserInfoComponent],
-  imports: [BrowserModule, AppRouterModule, HttpModule,NgbModule],
+  declarations: [AppComponent, ShowSongComponent, SongListComponent, MainComponent, LoginComponent, UserInfoComponent, SongSearchComponent],
+  imports: [BrowserModule,ReactiveFormsModule,FormsModule, MatInputModule,AppRouterModule,MatButtonModule,MatIconModule ,HttpModule,NgbModule, BrowserAnimationsModule,MatFormFieldModule],
   providers: [],
   bootstrap: [AppComponent],
 })
