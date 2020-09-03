@@ -25,7 +25,7 @@ export class SongListComponent implements OnInit {
     });
   }
   getSong(): Observable<any> {
-    return this.http.get(`${this.apiBaseUrl}/songs`);
+    return this.http.get(`${this.apiBaseUrl}/api/songs`);
   }
   goSong(title: String) {
     this.router.navigate(['/song', title]);

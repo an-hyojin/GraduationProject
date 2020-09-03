@@ -1,0 +1,39 @@
+  <div class="justify-content-center align-items-center d-flex h-100">
+    <div class=" bg-white w-50 h-50 p-5 rounded border ">
+        
+        <div class="align-items-center h-100 d-flex">
+       <div class="w-100">
+            <h1 class="text-center display-3">Join</h1>
+       
+            <form [formGroup]="joinForm" class=" w-100" (ngSubmit)="onSubmit()">
+    
+           
+                <mat-form-field class="formfield" appearance="legacy">
+                    <mat-label>Id</mat-label>
+                    <input formControlName="id" matInput placeholder="id">
+                  </mat-form-field>
+                  <br/>
+                  <mat-form-field class="formfield" appearance="legacy">
+                    <mat-label>E-mail</mat-label>
+                    <input formControlName="email" type="email" matInput placeholder="e-mail">
+                    <mat-error *ngIf="email.invalid">{{getErrorMessage()}}</mat-error>
+                  </mat-form-field>
+                  <br/>
+                  
+                  <mat-form-field  class="formfield"  appearance="legacy">
+                    <mat-label>Password</mat-label>
+                    <input  matInput [type]="hide ? 'password' : 'text'" formControlName="password" matInput class="example-right-align">
+                    <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
+                        <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon></button>
+                       
+                </mat-form-field>             
+                <br/>
+                  
+               
+                    <button class="btn btn-primary btn-block loginButton" type="submit">Join</button>
+             
+            
+        </form>
+    </div>
+</div>
+</div></div>

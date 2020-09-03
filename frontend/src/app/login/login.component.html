@@ -1,7 +1,7 @@
-<form [formGroup]="loginForm" >
+<form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
     
     <div class="row justify-content-md-center">
-        <div class="col-sm-6">
+        <div class="col-sm-9">
         <mat-form-field class="formfield" appearance="legacy">
             <mat-label>Id</mat-label>
             <input formControlName="id" matInput placeholder="Placeholder">
@@ -15,12 +15,15 @@
                
         </mat-form-field>             
         </div>
-        <div class="col-sm-2">
+        <div class="col-sm-3">
            <div class="row h-100 align-items-center">
-            <button class="btn btn-primary loginButton">Login</button>
+            <button class="btn btn-primary loginButton" type="submit">Login</button>
         </div>
     </div>
        
     </div>
     
 </form>
+<div class="row">
+    <button class="btn btn-light btn-block" routerLink="/join" >Create an Account</button>
+</div>

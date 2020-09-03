@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, FormGroupName, FormBuilder } from '@angular/forms';
-import {MatFormFieldControl} from '@angular/material/form-field';
+
+import { environment } from 'src/environments/environment';
+import { Http } from '@angular/http';
+
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -8,18 +11,24 @@ import {MatFormFieldControl} from '@angular/material/form-field';
   
 })
 export class LoginComponent implements OnInit {
-  idControl = new FormControl('');
-  passwordControl = new FormControl('');
   loginForm:FormGroup;
   hide = true;
-  constructor(fb:FormBuilder) {
+  private apiBaseUrl = environment.apiBaseUrl;
+  constructor(private fb:FormBuilder,private http:Http) {
     this.loginForm =fb.group({
-      id:this.idControl,
-      password:this.passwordControl
+      id:new FormControl(''),
+      password:new FormControl('')
     });
    }
-
+  onSubmit(){
+    console.log(this.loginForm.value);
+    this.http.post(`${this.apiBaseUrl}/login`, this.loginForm.value).subscribe(v=>{
+      console.log(v['_body']);
+     
+    });
+  }
   ngOnInit(): void {
+
   }
 
 }

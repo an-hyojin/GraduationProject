@@ -16,8 +16,9 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import {MatIconModule} from '@angular/material/icon';
 import {MatButtonModule} from '@angular/material/button';
 import { SongSearchComponent } from './song-search/song-search.component';
+import { JoinComponent } from './join/join.component';
 @NgModule({
-  declarations: [AppComponent, ShowSongComponent, SongListComponent, MainComponent, LoginComponent, UserInfoComponent, SongSearchComponent],
+  declarations: [AppComponent, ShowSongComponent, SongListComponent, MainComponent, LoginComponent, UserInfoComponent, SongSearchComponent, JoinComponent],
   imports: [BrowserModule,ReactiveFormsModule,FormsModule, MatInputModule,AppRouterModule,MatButtonModule,MatIconModule ,HttpModule,NgbModule, BrowserAnimationsModule,MatFormFieldModule],
   providers: [],
   bootstrap: [AppComponent],

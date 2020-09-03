@@ -24,7 +24,7 @@ export class ShowSongComponent implements OnInit {
     let options = new RequestOptions({
       headers: headers,
     });
-    return this.http.post(`${this.apiBaseUrl}/songs`, body, options);
+    return this.http.post(`${this.apiBaseUrl}/api/songs`, body, options);
   }
 
   ngOnInit(): void {
