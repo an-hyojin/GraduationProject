@@ -27,7 +27,7 @@ function connectDB() {
             console.log('data base 연결됨 -> ' + databaseURL);
 
             userSchema = mongoose.Schema({
-                id : String,
+                _id : String,
                 password : String,
                 email : String
             }); // user에 대한 스키마정의 -> id, password, email
@@ -157,10 +157,10 @@ router.route('/join').post(
 app.use('/', router);
 
 // 로그인 시 유저가 디비 안에 있나 검사 (Authorization user)
-var authUser = function(db, id, password, callback) {
-    console.log('input id : ' + id.toString() + '  : pw : ' + password);
+var authUser = function(db, _id, password, callback) {
+    console.log('input id : ' + _id.toString() + '  : pw : ' + password);
     // 내장함수 find 사용
-    userModel.find({ "id" : id, "password" : password }, 
+    userModel.find({ "id" : _id, "password" : password }, 
         function(err, docs)
         {
             if(err){
@@ -179,11 +179,11 @@ var authUser = function(db, id, password, callback) {
     );
 }
 
-var addUser = function(db, id, password, email, callback) {
-    console.log('add User 호출됨 ' + id + ', ' + password +', ' + email);
+var addUser = function(db, _id, password, email, callback) {
+    console.log('add User 호출됨 ' + _id + ', ' + password +', ' + email);
 
     // 추가하려는 유저에 대한 객체
-    var user = new userModel({ "id" : id, "password" : password, "email" : email });
+    var user = new userModel({ "id" : _id, "password" : password, "email" : email });
     // 내장함수 save 사용
     user.save
     (
@@ -194,7 +194,7 @@ var addUser = function(db, id, password, email, callback) {
                 return;
             }          
             console.log('사용자 추가 됨');
-            callback(null, user);      
+            callback(null, user);    
         }
     )
 }
