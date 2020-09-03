@@ -1,0 +1,21 @@
+<div *ngIf="!!song">
+  <h1>{{ song.title }}</h1>
+  <h1>{{ song.singer }}</h1>
+  <div *ngFor="let sentence of song.sentences; index as i">
+    <p>
+      <span *ngFor="let morph of song.morphs[i]; index as j"
+        ><span *ngIf="song.count_list[i].includes(j)">&nbsp;</span
+        ><span
+          [ngClass]="{
+            a_class: song.a_list[i].includes(j),
+            b_class: song.b_list[i].includes(j),
+            c_class: song.c_list[i].includes(j)
+          }"
+          >{{ morph }}</span
+        ></span
+      >
+    </p>
+    <p>{{ song.translation[i] }}</p>
+    <p></p>
+  </div>
+</div>

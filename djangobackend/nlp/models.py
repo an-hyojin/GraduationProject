@@ -3,11 +3,14 @@ from django.db import models
 
 # Create your models here.
 class Song:
-  def __init__(self, title, singer, album, lyrics, nlp_lyrics, trans, origin):
-    self.title = title
-    self.lyrics = lyrics
-    self.album = album
+  def __init__(self, singer, title, album, sentences, morphs, count_list,a_list,b_list,c_list,translation):
     self.singer = singer
-    self.nlp_lyrics = nlp_lyrics
-    self.trans = trans
-    self.origin = origin
+    self.title = title
+    self.album = album
+    self.sentences = sentences
+    self.morphs = morphs
+    self.count_list = count_list
+    self.a_list = a_list
+    self.b_list = b_list
+    self.c_list = c_list
+    self.translation = translation
