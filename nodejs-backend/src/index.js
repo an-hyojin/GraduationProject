@@ -44,4 +44,8 @@ app.use(router.allowedMethods());
 app.listen(port, () => {
     console.log('heurm server is listening to port ' + port);
 });
+
+const scheduler = require('./batch') // 스케쥴러 설정
+
+// app.use('/', router);
 const scheduler = require('./batch') // 스케쥴러 설정

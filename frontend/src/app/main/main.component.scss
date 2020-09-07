@@ -1,11 +1,9 @@
+@import "../../variable.scss";
 
-.container-fixed{
-   
-    margin:auto;
-
-
+.mainContainer {
+  width: 80%;
 }
 
-.user-info, .song-list, .search{
-    // min-width:380px;
+.loginButton {
+  background-color: $background-color;
 }

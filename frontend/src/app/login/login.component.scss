@@ -1,7 +1,11 @@
-.loginButton{
-    width: 4em;
-    height: 4em;
+@import "../../variable.scss";
+.formfield {
+  width: 100%;
 }
-.formfield{
-    width:100%;
+
+@media only screen and (min-width: 992px) {
+  .loginButton {
+    width: 3.9em;
+    height: 3.9em;
+  }
 }

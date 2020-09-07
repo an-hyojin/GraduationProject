@@ -1,24 +1,32 @@
-<div class="container">
-    
-<div class="row mt-3">
-    <div class="song-list h-100 col-12  col-md-6 col-lg-4">
-        <app-song-list></app-song-list>
-    </div>
-    <div class="search h-100 col-12 col-md-6  col-lg-4">
-        <app-song-search></app-song-search>
+<app-head></app-head>
 
+<div class="d-flex justify-content-center">
+  <div class="row mt-3 mainContainer">
+    <div class="song-list col-md-6 col-lg-4">
+      <app-song-list></app-song-list>
     </div>
-    <div class="h-100 col-12 user-info col-md-12  col-lg-4">
-        <div class="row justify-content-center">
-            <div class="col-md-auto">
-            <app-user-info></app-user-info>
+    <div class="search col-md-6 col-lg-4">
+      <app-song-search></app-song-search>
+    </div>
+    <div class="user-info col-md-12 col-lg-4">
+      <div class="justify-content-center">
+        <app-user-info></app-user-info>
+        <div class="d-flex justify-content-center mt-3">
+          <span *ngIf="!isLogin; else Logout">
+            <button class="btn pl-5 pr-5 btn-primary" routerLink="/login">
+              Login
+            </button>
+          </span>
+          <ng-template #Logout>
+            <button
+              class="btn btn-outline-primary pl-5 pr-5"
+              (click)="logout()"
+            >
+              Logout
+            </button>
+          </ng-template>
         </div>
-        <div class="col-md-auto mt-3">
-            <app-login></app-login>
-        </div>
-
+      </div>
     </div>
-    </div>
-</div>
-
+  </div>
 </div>
