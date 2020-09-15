@@ -19,7 +19,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { SongSearchComponent } from './song-search/song-search.component';
 import { JoinComponent } from './join/join.component';
 import { HeadComponent } from './head/head.component';
-import { QuizComponent } from './quiz/quiz.component';
 import { SongQuizComponent } from './song-quiz/song-quiz.component';
 import { HttpModule } from '@angular/http';
 @NgModule({
@@ -33,7 +32,6 @@ import { HttpModule } from '@angular/http';
     SongSearchComponent,
     JoinComponent,
     HeadComponent,
-    QuizComponent,
     SongQuizComponent,
   ],
   imports: [
@@ -54,4 +52,4 @@ import { HttpModule } from '@angular/http';
   providers: [],
   bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}

@@ -18,7 +18,7 @@ export class ShowSongComponent implements OnInit {
     private http: Http,
     private route: ActivatedRoute,
     private router: Router
-  ) { }
+  ) {}
   songId: String;
   getSong(): Observable<any> {
     // 노래 정보 가져오기
@@ -39,9 +39,9 @@ export class ShowSongComponent implements OnInit {
     this.getSong().subscribe((v) => {
       this.song = Song.parseFrom(JSON.parse(v._body)[0]);
     });
-    this.userName = "USER1";
+    this.userName = 'USER1';
   }
-  goQuiz(id: String) {
-    this.router.navigate(['/quiz', id]);
+  goQuiz() {
+    this.router.navigate(['/quiz', this.songId]);
   }
 }
