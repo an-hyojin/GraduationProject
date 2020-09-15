@@ -1,0 +1,14 @@
+@import "../../variable.scss";
+
+@each $label, $map in $displays {
+  .#{$label} {
+    font-size: map-get($map, font-size);
+    font-weight: map-get($map, font-weight);
+    height: 100%;
+    line-height: 1.3;
+  }
+}
+
+.singer-text {
+  color: $singer-color;
+}

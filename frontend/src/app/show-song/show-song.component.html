@@ -1,6 +1,7 @@
 <div *ngIf="!!song">
   <h1>{{ song.title }}</h1>
   <h1>{{ song.singer }}</h1>
+  <button class="btn btn-primary" (click)="goQuiz(song.id)">COMPLETE</button>
   <div *ngFor="let sentence of song.sentences; index as i">
     <p>
       <span *ngFor="let morph of song.morphs[i]; index as j"

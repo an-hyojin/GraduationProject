@@ -10,17 +10,43 @@ import { MainComponent } from './main/main.component';
 import { LoginComponent } from './login/login.component';
 import { UserInfoComponent } from './user-info/user-info.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import {MatFormFieldModule} from '@angular/material/form-field';
-import {MatInputModule} from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
-import {MatIconModule} from '@angular/material/icon';
-import {MatButtonModule} from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import {MatStepperModule} from '@angular/material/stepper';
+import { MatButtonModule } from '@angular/material/button';
 import { SongSearchComponent } from './song-search/song-search.component';
 import { JoinComponent } from './join/join.component';
 import { HeadComponent } from './head/head.component';
+import { SongQuizComponent } from './song-quiz/song-quiz.component';
 @NgModule({
-  declarations: [AppComponent, ShowSongComponent, SongListComponent, MainComponent, LoginComponent, UserInfoComponent, SongSearchComponent, JoinComponent, HeadComponent],
-  imports: [BrowserModule,ReactiveFormsModule,FormsModule, MatInputModule,AppRouterModule,MatButtonModule,MatIconModule ,HttpModule,NgbModule, BrowserAnimationsModule,MatFormFieldModule],
+  declarations: [
+    AppComponent,
+    ShowSongComponent,
+    SongListComponent,
+    MainComponent,
+    LoginComponent,
+    UserInfoComponent,
+    SongSearchComponent,
+    JoinComponent,
+    HeadComponent,
+    SongQuizComponent,
+  ],
+  imports: [
+    BrowserModule,
+    ReactiveFormsModule,
+    FormsModule,
+    MatInputModule,
+    AppRouterModule,
+    MatButtonModule,
+    MatIconModule,
+    MatStepperModule,
+    HttpModule,
+    NgbModule,
+    BrowserAnimationsModule,
+    MatFormFieldModule,
+  ],
   providers: [],
   bootstrap: [AppComponent],
 })

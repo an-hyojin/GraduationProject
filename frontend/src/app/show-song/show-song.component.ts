@@ -3,7 +3,7 @@ import { environment } from 'src/environments/environment';
 import { Headers, Http, RequestOptions } from '@angular/http';
 import { Observable } from 'rxjs';
 import { Song } from 'src/models/song';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-show-song',
@@ -13,11 +13,15 @@ import { ActivatedRoute } from '@angular/router';
 export class ShowSongComponent implements OnInit {
   private apiBaseUrl = environment.apiBaseUrl;
   song: Song;
-  constructor(private http: Http, private route: ActivatedRoute) {}
-  title: String;
+  constructor(
+    private http: Http,
+    private route: ActivatedRoute,
+    private router: Router
+  ) {}
+  songId: String;
   getSong(): Observable<any> {
     // 노래 정보 가져오기
-    let body = { title: this.title };
+    let body = { songId: this.songId };
     let headers = new Headers({
       'Cache-Control': 'no-cache',
     });
@@ -28,9 +32,14 @@ export class ShowSongComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.title = this.route.snapshot.paramMap.get('title');
+    this.songId = this.route.snapshot.paramMap.get('songId');
+
+    console.log(this.songId);
     this.getSong().subscribe((v) => {
       this.song = Song.parseFrom(JSON.parse(v._body)[0]);
     });
+  }
+  goQuiz(id: String) {
+    this.router.navigate(['/quiz', id]);
   }
 }

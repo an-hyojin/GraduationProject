@@ -4,14 +4,16 @@ import { SongListComponent } from './song-list/song-list.component';
 import { ShowSongComponent } from './show-song/show-song.component';
 import { MainComponent } from './main/main.component';
 import { JoinComponent } from './join/join.component';
-import {LoginComponent} from './login/login.component';
+import { LoginComponent } from './login/login.component';
+import { SongQuizComponent } from './song-quiz/song-quiz.component';
 const AppRoutes: Routes = [
-  { path: '', redirectTo:'main', pathMatch: 'full'},
-  { path: 'main', component: MainComponent},
-  { path: 'song/:title', component: ShowSongComponent },
-  {path:'join', component:JoinComponent},
-  {path:'login', component:LoginComponent},
-  { path: '*', redirectTo:'main', pathMatch: 'full'}
+  { path: '', redirectTo: 'main', pathMatch: 'full' },
+  { path: 'main', component: MainComponent },
+  { path: 'song/:songId', component: ShowSongComponent },
+  { path: 'join', component: JoinComponent },
+  { path: 'login', component: LoginComponent },
+  { path: 'quiz/:songId', component: SongQuizComponent },
+  { path: '*', redirectTo: 'main', pathMatch: 'full' },
 ];
 
 export const AppRouterModule = RouterModule.forRoot(AppRoutes, {

@@ -5,7 +5,7 @@
       <tr
         *ngFor="let song of songInfos; index as i"
         class="table-item"
-        (click)="goSong(song.title)"
+        (click)="goSong(song.id)"
       >
         <th scope="row" class="rank align-middle">{{ i + 1 }}</th>
         <td class="info">
