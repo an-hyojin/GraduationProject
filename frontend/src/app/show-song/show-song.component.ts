@@ -23,7 +23,6 @@ export class ShowSongComponent implements OnInit {
   getSong(): Observable<any> {
     // 노래 정보 가져오기
     let body = { songId: this.songId };
->>>>>>> 1121395fc060c2b980e68872bc2bdc3e15eb8edc
     let headers = new Headers({
       'Cache-Control': 'no-cache',
     });
@@ -42,14 +41,7 @@ export class ShowSongComponent implements OnInit {
     });
     this.userName = "USER1";
   }
-<<<<<<< HEAD
-  goQuiz(title: String) {
-    this.router.navigate(['/quiz', title]);
-  }
-}
-=======
   goQuiz(id: String) {
     this.router.navigate(['/quiz', id]);
   }
 }
->>>>>>> 1121395fc060c2b980e68872bc2bdc3e15eb8edc
