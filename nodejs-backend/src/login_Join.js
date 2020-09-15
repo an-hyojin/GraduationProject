@@ -1,3 +1,4 @@
+require('dotenv').config({ path : '../.env' });
 const express = require('express');
 const http = require('http');
 const port = process.env.PORT || 4000;
@@ -21,14 +22,24 @@ function connectDB() {
     mongoose.Promise = global.Promise; 
     mongoose.connect(databaseURL);
 
+    database = mongoose.connection;
+
     database.on('open', 
         function () 
         {
             console.log('data base 연결됨 -> ' + databaseURL);
 
             userSchema = mongoose.Schema({
-                _id : String,
-                password : String,
+                id : {
+                    type : String,
+                    required : true,
+                    trim : true
+                },
+                password : {
+                    type : String,
+                    required : true,
+                    trim : true
+                },
                 email : String
             }); // user에 대한 스키마정의 -> id, password, email
             console.log('userSchema 정의');
@@ -89,15 +100,16 @@ router.route('/login').post(
                     if(database){
                         if(err){
                             console.log('Error!');
-                            alert('에러 발생');
-                            res.end();
+                            alert('에러 발생'); // res.json({"에러"});
+                            res.end(); // 생략 가능
                             return;
                         }
 
                         if(docs){
                             console.dir(docs);
-                            alert('로그인에 성공했습니다!');
-                            res.redirect() // 로그인 페이지 이후 경로 넣거나 그냥 없애도 되는지 체크
+                            console.log('로그인에 성공했습니다!');
+                            res.send(id);
+                            // res.redirect() // 로그인 페이지 이후 경로 넣거나 그냥 없애도 되는지 체크
                         } else {
                             console.log('empty error!');
                             alert('존재하지 않는 아이디입니다.');
@@ -113,7 +125,7 @@ router.route('/login').post(
             );
         }
     }
-)
+);
 
 
 // 회원가입 라우터
@@ -157,10 +169,10 @@ router.route('/join').post(
 app.use('/', router);
 
 // 로그인 시 유저가 디비 안에 있나 검사 (Authorization user)
-var authUser = function(db, _id, password, callback) {
-    console.log('input id : ' + _id.toString() + '  : pw : ' + password);
+var authUser = function(db, id, password, callback) {
+    console.log('input id : ' + id.toString() + '  : pw : ' + password);
     // 내장함수 find 사용
-    userModel.find({ "id" : _id, "password" : password }, 
+    userModel.find({ "id" : id, "password" : password }, 
         function(err, docs)
         {
             if(err){
@@ -179,22 +191,22 @@ var authUser = function(db, _id, password, callback) {
     );
 }
 
-var addUser = function(db, _id, password, email, callback) {
-    console.log('add User 호출됨 ' + _id + ', ' + password +', ' + email);
+var addUser = function(db, id, password, email, callback) {
+    console.log('add User 호출됨 ' + id + ', ' + password +', ' + email);
 
     // 추가하려는 유저에 대한 객체
-    var user = new userModel({ "id" : _id, "password" : password, "email" : email });
+    var user = new userModel({ "id" : id, "password" : password, "email" : email });
     // 내장함수 save 사용
     user.save
     (
         function(err)
         {
             if(err){
-                callback(err, null);
+                callback(err, null, false); // 회원가입 실패 시 false반환?
                 return;
             }          
             console.log('사용자 추가 됨');
-            callback(null, user);    
+            callback(null, user, true); // 회원가입 성공 시 true반환?
         }
     )
 }
@@ -230,3 +242,5 @@ appServer.listen(app.get('port'),
         connectDB();
     }
 );
+
+module.exports = router;

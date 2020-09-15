@@ -3,11 +3,15 @@ const request = require("request");
 const api = new Router();
 
 const songs = require("./songs");
+const users = require("./users");
 const fs = require("fs");
 const csv = require("csv-parser");
 const { mongoose } = require("mongoose");
+
 api.use("/songs", songs.routes());
+api.use("./users", users.routes());
 const Song = require("../models/song");
+const User = require("../models/user");
 
 var end = new Promise(function (resolve, reject) {
   let results = [];
