@@ -20,14 +20,15 @@ export class SongListComponent implements OnInit {
     this.getSong().subscribe((v) => {
       let res = JSON.parse(v._body);
       res.forEach((element) => {
-        this.songInfos.push(element);
+        this.songInfos.push(SongInfo.parseFrom(element));
       });
     });
   }
   getSong(): Observable<any> {
-    return this.http.get(`${this.apiBaseUrl}/songs`);
+    return this.http.get(`${this.apiBaseUrl}/api/songs`);
   }
-  goSong(title: String) {
-    this.router.navigate(['/song', title]);
+  goSong(id) {
+    console.log(id);
+    this.router.navigate(['/song', id]);
   }
 }

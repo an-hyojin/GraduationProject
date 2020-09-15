@@ -1,61 +1,51 @@
 <nav class="navbar navbar-inverse navbar-fixed-top">
-<div class="container">
-  <div class="navbar-header">
-    <a class="navbar-brand" href="#">TKDLEMDLFMA</a>
-    <div class="user-option">
-      <img id="user-img" src="../../assets/image/user.png" alt="image">
-      <span id="user-name">{{ userName }}</span>
+  <div class="container">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="#">TKDLEMDLFMA</a>
+      <div class="user-option">
+        <img id="user-img" src="../../assets/image/user.png" alt="image">
+        <span id="user-name">{{ userName }}</span>
+      </div>
     </div>
-  </div>
 
-</div>
+  </div>
 </nav>
 <div class="learning" *ngIf="!!song">
   <h1 id="song-title">{{ song.title }}</h1>
   <h3 id="song-singer">{{ song.singer }}</h3>
   <div class="content row">
     <div class="col-md-6">
-    <img id="song-album" alt="img">
-  </div>
-  <div class="col-md-6">
-    <div id="mycarousel" class="carousel slide" data-ride="carousel">
-      <ol class="carousel-indicators">
-        <li data-target="#mycarousel" data-slide-to="0" class="active"></li>
-        <li data-target="#mycarousel" data-slide-to="1"></li>
-        <li data-target="#mycarousel" data-slide-to="2"></li>
-      </ol>
-  <div class="lyrics" *ngFor="let sentence of song.sentences; index as i">
-    <p>
-      <span class="kor" *ngFor="let morph of song.morphs[i]; index as j"
-        ><span *ngIf="song.count_list[i].includes(j)">&nbsp;</span
-        ><span
-          [ngClass]="{
+      <img id="song-album" alt="img">
+    </div>
+    <div class="col-md-6">
+      <div id="mycarousel" class="carousel slide" data-ride="carousel">
+        <ol class="carousel-indicators">
+          <li data-target="#mycarousel" data-slide-to="0" class="active"></li>
+          <li data-target="#mycarousel" data-slide-to="1"></li>
+          <li data-target="#mycarousel" data-slide-to="2"></li>
+        </ol>
+        <div class="lyrics" *ngFor="let sentence of song.sentences; index as i">
+          <p>
+            <span class="kor" *ngFor="let morph of song.morphs[i]; index as j"><span
+                *ngIf="song.count_list[i].includes(j)">&nbsp;</span><span [ngClass]="{
             a_class: song.a_list[i].includes(j),
             b_class: song.b_list[i].includes(j),
             c_class: song.c_list[i].includes(j)
-          }"
-          >{{ morph }}</span
-        ></span
-      >
-    </p>
-    <p>
-      <span class="eng" *ngFor="let trans of song.morphs_trans[i]; index as j"
-        ><span *ngIf="song.count_list[i].includes(j)">&nbsp;</span
-        ><span
-          [ngClass]="{
+          }">{{ morph }}</span></span>
+          </p>
+          <p>
+            <span class="eng" *ngFor="let trans of song.morphs_trans[i]; index as j"><span
+                *ngIf="song.count_list[i].includes(j)">&nbsp;</span><span [ngClass]="{
             a_class: song.a_list[i].includes(j),
             b_class: song.b_list[i].includes(j),
             c_class: song.c_list[i].includes(j)
-          }"
-          >{{ trans }}</span
-        ></span
-      >
-    </p>
-    <p class="trans">{{ song.translation[i] }}</p>
-    <br>
+          }">{{ trans }}</span></span>
+          </p>
+          <p class="trans">{{ song.translation[i] }}</p>
+          <br>
+        </div>
+      </div>
+      <button class="btn btn-primary" (click)="goQuiz(song.title)">COMPLETE</button>
+    </div>
+
   </div>
-  </div>
-  <button class="btn btn-primary" (click)="goQuiz(song.title)">COMPLETE</button>
-</div>
- 
-</div>
