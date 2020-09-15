@@ -12,4 +12,5 @@ class SongSerializer(serializers.Serializer):
     b_list = serializers.ListField(child=serializers.ListField(child=serializers.IntegerField()))
     c_list = serializers.ListField(child=serializers.ListField(child=serializers.IntegerField()))
     translation = serializers.ListField(child=serializers.CharField(max_length=200))
+    morphs_trans = serializers.ListField(child=serializers.ListField(child=serializers.CharField(max_length=200)))
     

@@ -3,7 +3,7 @@ import { environment } from 'src/environments/environment';
 import { Headers, Http, RequestOptions } from '@angular/http';
 import { Observable } from 'rxjs';
 import { Song } from 'src/models/song';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-show-song',
@@ -13,10 +13,11 @@ import { ActivatedRoute } from '@angular/router';
 export class ShowSongComponent implements OnInit {
   private apiBaseUrl = environment.apiBaseUrl;
   song: Song;
-  constructor(private http: Http, private route: ActivatedRoute) {}
+  constructor(private http: Http, private route: ActivatedRoute, private router: Router) {}
   title: String;
+  userName: String;
   getSong(): Observable<any> {
-    // angular - node js - django 연결 샘플
+    // 노래 정보 가져오기
     let body = { title: this.title };
     let headers = new Headers({
       'Cache-Control': 'no-cache',
@@ -32,5 +33,9 @@ export class ShowSongComponent implements OnInit {
     this.getSong().subscribe((v) => {
       this.song = Song.parseFrom(JSON.parse(v._body)[0]);
     });
+    this.userName = "USER1";
+  }
+  goQuiz(title: String) {
+    this.router.navigate(['/quiz', title]);
   }
 }

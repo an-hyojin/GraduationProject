@@ -20,13 +20,17 @@ var end = new Promise(function (resolve, reject) {
 });
 
 api.get("/temp", async (ctx, next) => {
+  console.log("here 11");
   let results = await end;
+  console.log("here 12");
   let body = [];
   for (i = 8; i < 10; i++) {
     body.push(results[i]);
 
     if (i == 9) break;
   }
+  console.log("here 1");
+  console.log(body);
   const uri = "http://localhost:8000/nlp/preprocessing/";
   try {
     const results = await request.post(
@@ -40,11 +44,11 @@ api.get("/temp", async (ctx, next) => {
       async (e, r, b) => {
         console.log(b);
         resultArray = b;
-        resultArray.forEach((element) => {
+       /* resultArray.forEach((element) => {
           let song = new Song(element);
-          song.save();
+          //song.save();
           console.log(element.title);
-        });
+        });*/
       }
     );
     ctx.body = results;

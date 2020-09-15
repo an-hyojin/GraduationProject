@@ -1,9 +1,95 @@
+@import "~bootstrap/dist/css/bootstrap.css";
+
+.container{
+  padding-left: 15px;
+  padding-right: 15px;
+  margin-left: 0;
+  margin-right: 0;
+}
+.navbar {
+  background-color: #0099ff;
+  height: 70px;
+}
+.navbar-header{
+  float: left;
+}
+.navbar-brand{
+  color: white;
+  font-size: 30px;
+  text-decoration: none;
+  font-weight: 500;
+  float: left;
+  &:hover{
+    color: #ccc;
+  }
+}
+.user-option{
+  position: absolute;
+  right: 100px;
+  max-width: 100%;
+  max-height: 100%;
+  text-align: center;
+}
+#user-img{
+  max-width: 50px;
+  max-height: 50px;
+  margin-right: 10px;
+}
+#user-name{
+  color: white;
+  font-size: 25px;
+  width: 50%;
+  margin: 0 auto;
+}
+.learning{
+  width: 80%;
+  height: 70%;
+  margin: 0 auto;
+  padding: 70px;
+  text-align: center;
+}
+#song-title{
+  color: #2050c6;
+  font-weight: 700;
+  margin-bottom: 30px;
+}
+#song-singer{
+  margin-bottom: 50px;
+}
+.content{
+  position: relative;
+}
+#song-album{
+  position: relative;
+  width: 300px;
+  height: 300px;
+  margin: 20px;
+  float: left;
+  border: 1px solid gray;
+}
+#mycarousel{
+  right: 100px;
+  float: right;
+}
+.col-md-6{
+  text-align: center;
+  max-height: 300px;
+}
+.lyrics{
+  position: relative;
+  margin: 20px;
+  font-size: 20px;
+  font-weight: 600;
+}
 .a_class {
-  background-color: red;
+  color: red;
 }
 .b_class {
-  background-color: yellow;
+  color: #ffcc00;
 }
 .c_class {
-  background-color: blue;
+  color: blue;
+}
+.kor{
+  font-size: 23px;
 }

@@ -1,0 +1,27 @@
+<nav class="navbar navbar-inverse navbar-fixed-top">
+  <div class="container">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="#">TKDLEMDLFMA</a>
+      <div class="user-option">
+        <img id="user-img" src="../../assets/image/user.png" alt="image">
+        <span id="user-name">{{ userName }}</span>
+      </div>
+    </div>
+  
+  </div>
+  </nav>  
+  <div class="content" *ngIf="!!song">
+    <h1 id="song-title">{{ song.title }}</h1>
+    <h3 id="song-singer">{{ song.singer }}</h3>
+    <div class="question">
+    <h2>List the words in the correct order</h2>
+    <div class="lyrics" cdkDropList cdkDropListOrientation="horizontal" (cdkDropListDropped)="drop($event)" >
+      <p *ngFor="let morph of questionList; index as i">
+        <span class="kor" cdkDrag>{{ morph }}</span>
+      </p>
+    </div>
+    <p id=trans>{{questionTrans}}</p>
+    
+    <button class="btn btn-primary" (click)=checkAnswer()>SUBMIT</button>
+  </div>
+  </div>

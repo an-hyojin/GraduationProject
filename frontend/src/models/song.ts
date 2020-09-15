@@ -9,6 +9,7 @@ export class Song {
   c_list: [[number]];
   count_list: [[number]];
   morphs: [[string]];
+  morphs_trans: [string];
   album: string;
   static parseFrom(json): Song {
     const o: Song = new Song();
@@ -24,6 +25,10 @@ export class Song {
     o.a_list = json.a_list;
     o.b_list = json.b_list;
     o.c_list = json.c_list;
+    o.morphs_trans = json.morphs_trans;
+    
+    console.log(json);
     return o;
+    
   }
 }
