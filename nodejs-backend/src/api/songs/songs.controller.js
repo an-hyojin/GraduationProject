@@ -17,7 +17,7 @@ exports.post = async (ctx) => {
   let song;
 
   try {
-    song = await Song.find({ _id: songId }).exec();
+    song = await Song.findById({ _id: songId }).exec();
   } catch (e) {
     return ctx.throw(500, e);
   }

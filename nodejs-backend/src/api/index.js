@@ -9,6 +9,7 @@ const { mongoose } = require("mongoose");
 api.use("/songs", songs.routes());
 const Song = require("../models/song");
 const Word = require("../models/word");
+const User = require("../models/user");
 var end = new Promise(function (resolve, reject) {
   let results = [];
   fs.createReadStream("../../GoodSong.csv")
@@ -20,7 +21,7 @@ var end = new Promise(function (resolve, reject) {
 });
 
 api.post("/login", async (ctx, next) => {
-  ctx.body = "id";
+  ctx.body = "5f62611948d30c856453851b";
 });
 
 api.post("/join", async (ctx, next) => {
@@ -171,6 +172,21 @@ api.get("/temp", async (ctx, next) => {
     console.log(error);
     ctx.body = error;
   }
+});
+api.post("/user", async (ctx, next) => {
+  const { id } = ctx.request.body;
+  let user = await User.findById({ _id: id }, { password: 0 }).exec();
+  let res = await Song.find({}, { singer: 1, title: 1 })
+    .where("_id")
+    .in(user.learning)
+    .exec();
+
+  let learn = [];
+  res.forEach((v) => {
+    learn.push(JSON.stringify(v));
+  });
+  user.learning = learn;
+  ctx.body = user;
 });
 
 module.exports = api;

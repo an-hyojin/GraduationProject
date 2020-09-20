@@ -20,7 +20,7 @@ export class SongListComponent implements OnInit {
     this.getSong().subscribe((v) => {
       let res = JSON.parse(v._body);
       res.forEach((element) => {
-        this.songInfos.push(SongInfo.parseFrom(element));
+        this.songInfos.push(new SongInfo(element));
       });
     });
   }

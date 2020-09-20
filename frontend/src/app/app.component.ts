@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import {Http } from '@angular/http';
+import { Http } from '@angular/http';
 
 @Component({
   selector: 'app-root',
@@ -9,9 +9,6 @@ import {Http } from '@angular/http';
 export class AppComponent {
   constructor(private http: Http) {}
 
-  ngOnInit(): void {
-
-  }
+  ngOnInit(): void {}
   title = 'frontend';
-  
 }

@@ -1,4 +1,4 @@
-<app-head> </app-head>
+<app-head [id]="id"> </app-head>
 <div class="m-3">
   <div>
     <h1 class="display-3">
@@ -54,8 +54,7 @@
       <mat-step>
         <div class="content" *ngIf="!!song">
           <ng-template matStepLabel>Problem 4</ng-template>
-          <h1 id="song-title">{{ song.title }}</h1>
-          <h3 id="song-singer">{{ song.singer }}</h3>
+
           <div class="question">
             <h2>List the words in the correct order</h2>
             <div

@@ -46,6 +46,7 @@ export class LoginComponent implements OnInit {
           console.log(id);
           if (!!id) {
             localStorage.setItem('auth', id);
+            console.log(id);
             this.router.navigate(['/main']);
           } else {
             alert('Login Failed');

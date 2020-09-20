@@ -1,15 +1,22 @@
-import { Component, OnInit } from '@angular/core';
-
+import {
+  Component,
+  Input,
+  OnChanges,
+  OnInit,
+  SimpleChanges,
+} from '@angular/core';
+import { User } from '../../models/user';
 @Component({
   selector: 'app-user-info',
   templateUrl: './user-info.component.html',
-  styleUrls: ['./user-info.component.scss']
+  styleUrls: ['./user-info.component.scss'],
 })
-export class UserInfoComponent implements OnInit {
+export class UserInfoComponent implements OnChanges {
+  constructor() {}
 
-  constructor() { }
+  @Input() user: User;
 
-  ngOnInit(): void {
+  ngOnChanges(changes: SimpleChanges): void {
+    console.log(this.user);
   }
-
 }

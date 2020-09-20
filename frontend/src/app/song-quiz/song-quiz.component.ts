@@ -26,7 +26,7 @@ export class SongQuizComponent implements OnInit {
   questionList: String[] = [];
   answerList: String[] = [];
   questionTrans: String;
-
+  id: string;
   songId: String;
   title: string;
   singer: string;
@@ -58,10 +58,10 @@ export class SongQuizComponent implements OnInit {
   answer: string[] = [];
   ngOnInit(): void {
     this.songId = this.route.snapshot.paramMap.get('songId');
-
+    this.id = localStorage.getItem('id');
     var index = Math.floor(Math.random() * (20 - 1));
     this.getSong().subscribe((v) => {
-      this.song = Song.parseFrom(JSON.parse(v._body)[0]);
+      this.song = Song.parseFrom(JSON.parse(v._body));
       this.sentence = this.song.sentences.splice(index, 1);
       this.questionList = this.sentence[0].split(' ');
       for (var i = 0; i < this.questionList.length; i++) {
@@ -94,9 +94,11 @@ export class SongQuizComponent implements OnInit {
   shuffle(array): void {
     array.sort(() => Math.random() - 0.5);
   }
+
   drop(event: CdkDragDrop<string[]>) {
     moveItemInArray(this.questionList, event.previousIndex, event.currentIndex);
   }
+
   checkAnswer(): void {
     if (this.answerList == this.questionList) {
       alert('correct!!');

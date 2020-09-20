@@ -1,11 +1,18 @@
-<div class="w-100 head">
-  <img
-    class="d-inline ml-2"
-    style="width: 70px; height: auto"
-    src="../assets/image/cloud.png"
-  />
+<div class="w-100 head row">
+  <div class="col">
+    <img
+      class="d-inline ml-2"
+      style="width: 70px; height: auto"
+      src="../assets/image/cloud.png"
+    />
 
-  <h2 class="align-middle d-inline text-white" routerLink="/main">
-    TKDLXMDLFMA
-  </h2>
+    <h2 class="align-middle d-inline text-white" routerLink="/main">
+      TKDLXMDLFMA
+    </h2>
+  </div>
+  <div class="col-md-auto"></div>
+  <div *ngIf="!!id" class="col col-md-2 m-2">
+    <img id="user-image" src="../../assets/image/user.png" alt="image" />
+    <span class="font-weight-bold ml-2 id text-light">{{ id }}</span>
+  </div>
 </div>

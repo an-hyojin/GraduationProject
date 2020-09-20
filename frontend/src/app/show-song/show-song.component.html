@@ -1,62 +1,104 @@
-<nav class="navbar navbar-inverse navbar-fixed-top">
-  <div class="container">
-    <div class="navbar-header">
-      <a class="navbar-brand" href="#">TKDLEMDLFMA</a>
-      <div class="user-option">
-        <img id="user-img" src="../../assets/image/user.png" alt="image" />
-        <span id="user-name">{{ userName }}</span>
-      </div>
+<app-head [id]="id"></app-head>
+<div>
+  <div *ngIf="!!song" class="container">
+    <div class="text-center m-3">
+      <h1 id="song-title">{{ song.title }}</h1>
+      <h3 id="song-singer">{{ song.singer }}</h3>
     </div>
-  </div>
-</nav>
-<div class="learning" *ngIf="!!song">
-  <h1 id="song-title">{{ song.title }}</h1>
-  <h3 id="song-singer">{{ song.singer }}</h3>
-  <div class="content row">
-    <div class="col-md-6">
-      <img id="song-album" alt="img" />
-    </div>
-    <div class="col-md-6">
-      <div id="mycarousel" class="carousel slide" data-ride="carousel">
-        <ol class="carousel-indicators">
-          <li data-target="#mycarousel" data-slide-to="0" class="active"></li>
-          <li data-target="#mycarousel" data-slide-to="1"></li>
-          <li data-target="#mycarousel" data-slide-to="2"></li>
-        </ol>
-        <div class="lyrics" *ngFor="let sentence of song.sentences; index as i">
-          <p>
-            <span class="kor" *ngFor="let morph of song.morphs[i]; index as j"
-              ><span *ngIf="song.count_list[i].includes(j)">&nbsp;</span
-              ><span
-                [ngClass]="{
-                  a_class: song.a_list[i].includes(j),
-                  b_class: song.b_list[i].includes(j),
-                  c_class: song.c_list[i].includes(j)
-                }"
-                >{{ morph }}</span
-              ></span
-            >
-          </p>
-          <p>
-            <span
-              class="eng"
-              *ngFor="let trans of song.morphs_trans[i]; index as j"
-              ><span *ngIf="song.count_list[i].includes(j)">&nbsp;</span
-              ><span
-                [ngClass]="{
-                  a_class: song.a_list[i].includes(j),
-                  b_class: song.b_list[i].includes(j),
-                  c_class: song.c_list[i].includes(j)
-                }"
-                >{{ trans }}</span
-              ></span
-            >
-          </p>
-          <p class="trans">{{ song.translation[i] }}</p>
-          <br />
+    <div class="row d-flex align-items-center">
+      <div class="col-md-5 justify-content-center d-flex">
+        <div>
+          <img [src]="song.album" [alt]="song.singer" />
         </div>
       </div>
-      <button class="btn btn-primary" (click)="goQuiz()">COMPLETE</button>
+      <div class="col-md-7">
+        <div
+          id="carouselExampleIndicators"
+          class="carousel slide"
+          data-interval="false"
+        >
+          <ol class="carousel-indicators">
+            <li
+              *ngFor="let slice of songslice; index as i; let isFirst = first"
+              data-target="#carouselExampleIndicators"
+              [attr.data-slide-to]="i"
+              [ngClass]="{ active: isFirst }"
+            ></li>
+          </ol>
+          <div
+            class="carousel-inner d-flex align-items-center"
+            id="songContainer"
+          >
+            <div
+              *ngFor="let slice of songslice; let isFirst = first; index as i"
+              class="carousel-item mt-4"
+              [ngClass]="{ active: isFirst }"
+            >
+              <div
+                *ngFor="let sentence of slice; index as j"
+                class="w-75 m-auto"
+              >
+                <p>
+                  <span
+                    class="kor"
+                    *ngFor="let morph of song.morphs[5 * i + j]; index as k"
+                    ><span *ngIf="song.count_list[5 * i + j].includes(k)"
+                      >&nbsp;</span
+                    ><span
+                      class="morph"
+                      [ngClass]="{
+                        a_class: song.a_list[5 * i + j].includes(k),
+                        b_class: song.b_list[5 * i + j].includes(k),
+                        c_class: song.c_list[5 * i + j].includes(k)
+                      }"
+                      [ngbTooltip]="song.morphs_trans[5 * i + j][k]"
+                      (click)="
+                        dictionary(morph, song.morphs_trans[5 * i + j][k])
+                      "
+                      >{{ morph }}</span
+                    ></span
+                  >
+                </p>
+                <p class="trans text-secondary">
+                  {{ song.translation[5 * i + j] }}
+                </p>
+              </div>
+            </div>
+          </div>
+          <a
+            class="carousel-control-prev"
+            href="#carouselExampleIndicators"
+            role="button"
+            data-slide="prev"
+          >
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="sr-only">Previous</span>
+          </a>
+          <a
+            class="carousel-control-next"
+            href="#carouselExampleIndicators"
+            role="button"
+            data-slide="next"
+          >
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="sr-only">Next</span>
+          </a>
+        </div>
+      </div>
     </div>
+    <div class="row d-flex align-items-center">
+      <button class="btn btn-primary text-center mx-auto" (click)="goQuiz()">
+        COMPLETE
+      </button>
+    </div>
+  </div>
+  <div *ngIf="!!dict" class="dict alert alert-info m-3">
+    <button type="button" class="close" (click)="dict = null">
+      <span>&times;</span>
+    </button>
+    <h4>words</h4>
+    <span>: {{ dict.morph }}</span>
+    <h4>means</h4>
+    <span>: {{ dict.trans }}</span>
   </div>
 </div>
