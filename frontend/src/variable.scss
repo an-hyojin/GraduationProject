@@ -1,0 +1,37 @@
+$light-gray: #f8f9fa;
+$light-blue: #afcbde;
+$background-color: rgb(52, 152, 219);
+$expand-tr: 8em;
+$singer-color: rgb(1, 89, 147);
+$displays: (
+  display-1: (
+    name: 1,
+    font-size: 4.5rem,
+    font-weight: 300,
+  ),
+  display-2: (
+    name: 2,
+    font-size: 4rem,
+    font-weight: 300,
+  ),
+  display-3: (
+    name: 3,
+    font-size: 3rem,
+    font-weight: 300,
+  ),
+  display-4: (
+    name: 4,
+    font-size: 2.5rem,
+    font-weight: 300,
+  ),
+  display-5: (
+    name: 5,
+    font-size: 2rem,
+    font-weight: 300,
+  ),
+  display-6: (
+    name: 6,
+    font-size: 1.5rem,
+    font-weight: 300,
+  ),
+) !default;

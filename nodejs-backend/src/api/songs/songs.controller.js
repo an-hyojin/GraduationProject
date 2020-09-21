@@ -12,12 +12,12 @@ exports.list = async (ctx) => {
 
 exports.post = async (ctx) => {
   console.log(ctx);
-  const { title } = ctx.request.body;
+  const { songId } = ctx.request.body;
 
   let song;
 
   try {
-    song = await Song.find({ title: title }).exec();
+    song = await Song.findById({ _id: songId }).exec();
   } catch (e) {
     return ctx.throw(500, e);
   }

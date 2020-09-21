@@ -1,0 +1,35 @@
+<div class="border container user-container">
+  <div class="row align-items-center user-info">
+    <div class="col-sm-4">
+      <img class="user-image ml-3" src="../../assets/image/user.png" />
+    </div>
+    <div class="col-sm-auto">
+      <h2 *ngIf="!!user; else noUser">Hello, {{ user.id }}</h2>
+      <ng-template #noUser> <h2>Login is required.</h2></ng-template>
+    </div>
+  </div>
+
+  <div class="row learn-info">
+    <div
+      *ngIf="!!user && user.learning.length > 0; else noLearning"
+      class="ml-2 w-100 mb-5 h-100"
+    >
+      <p class="font-weight-bold learned">Learned {{ user.learning.length }}</p>
+      <div class="overflow-auto h-75">
+        <ul class="list-group list-group-flush w-100">
+          <li
+            class="list-group-item"
+            *ngFor="let learn of user.learning"
+            [routerLink]="['/song', learn.id]"
+          >
+            {{ learn.singer }} - {{ learn.title }}
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <ng-template #noLearning
+      ><p class="ml-2">You haven't learned anything yet.</p></ng-template
+    >
+  </div>
+</div>
