@@ -19,13 +19,14 @@ export class SongQuizComponent implements OnInit {
     private http: Http,
     private route: ActivatedRoute,
     private router: Router
-  ) {}
+  ) { }
 
   userName: String;
   sentence: String[] = [];
   questionList: String[] = [];
-  answerList: String[] = [];
-  questionTrans: String;
+  answerList: String[][] = [];
+  questionTrans: String[] = [];
+  arrayQuizzes: String[][] = [];
 
   songId: String;
   title: string;
@@ -56,20 +57,23 @@ export class SongQuizComponent implements OnInit {
   quizzes: Quiz[] = [];
   examples: string[][] = [];
   answer: string[] = [];
+  test: String;
   ngOnInit(): void {
     this.songId = this.route.snapshot.paramMap.get('songId');
-
-    var index = Math.floor(Math.random() * (20 - 1));
     this.getSong().subscribe((v) => {
       this.song = Song.parseFrom(JSON.parse(v._body)[0]);
-      this.sentence = this.song.sentences.splice(index, 1);
-      this.questionList = this.sentence[0].split(' ');
-      for (var i = 0; i < this.questionList.length; i++) {
-        this.answerList[i] = this.questionList[i];
+      for (var i = 0; i < 2; i++) {
+        var index = Math.floor(Math.random() * 23);
+        this.sentence = this.song.sentences.splice(index, 1);
+        this.questionList = this.sentence[0].split(' ');
+        this.answerList.push(this.sentence[0].split(' '));
+        this.questionList.sort(() => Math.random() - 23);
+        this.questionTrans.push(this.song.translation[index]);
+        console.log(this.song.translation[index]);
+        this.arrayQuizzes.push(this.questionList);
       }
-      this.shuffle(this.questionList);
-      this.questionTrans = this.song.translation[index];
     });
+    console.log(this.questionTrans);
     this.getQuiz().subscribe((v) => {
       JSON.parse(v._body).forEach((element) => {
         const quiz = new Quiz(element);
@@ -90,15 +94,12 @@ export class SongQuizComponent implements OnInit {
   select(num: number, ans: string) {
     this.answer[num] = ans;
   }
-
-  shuffle(array): void {
-    array.sort(() => Math.random() - 0.5);
+  drop(event: CdkDragDrop<string[]>, index) {
+    moveItemInArray(this.arrayQuizzes[index], event.previousIndex, event.currentIndex);
   }
-  drop(event: CdkDragDrop<string[]>) {
-    moveItemInArray(this.questionList, event.previousIndex, event.currentIndex);
-  }
-  checkAnswer(): void {
-    if (this.answerList == this.questionList) {
+  checkAnswer(index): void {
+    console.log()
+    if (JSON.stringify(this.answerList[index]) === JSON.stringify(this.arrayQuizzes[index])) {
       alert('correct!!');
     } else {
       alert('Oops!');
