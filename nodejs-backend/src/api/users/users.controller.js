@@ -3,12 +3,12 @@ const User = require('../../models/user');
 
 // 로그인
 exports.login = async(ctx) => {
-    const schema = Joi.object().keys({
+    const schema = Joi.object({
         id : Joi.string().required(),
-        password : Joi.string.required()
+        password : Joi.string().required()
     }); // 데이터 검증
 
-    const result = Joi.validate(ctx.request.body, schema);
+    const result = schema.validate(ctx.request.body);
 
     if(result.error) {
         ctx.status = 400;
@@ -20,12 +20,13 @@ exports.login = async(ctx) => {
     let user;
 
     try {
-        user = await User.findById(id).exec(); // findById체크 and 
+        // 체크
+        user = await User.findByUser(id);
     } catch(e) {
         ctx.throw(500, e);
     }
 
-    if(!user || user.validatePassword(password)) {
+    if(!user) { // if(!user || user.validatePassword(password))
         ctx.status = 403;
         ctx.body = { message : "user not found" };
         return;
@@ -34,23 +35,25 @@ exports.login = async(ctx) => {
 };
 
 // 회원가입
-exports.join = async(ctx) => {
-    const schema = Joi.object().keys({
+exports.join = async (ctx) => {
+    const schema = Joi.object({
         id : Joi.string().required(),
-        password : Joi.string.required(),
-        email : Joi.string.email().required()
+        password : Joi.string().required(),
+        email : Joi.string().required().email()
     }); // 데이터 검증
+    
+    const validation = schema.validate(ctx.request.body);
 
-    const result = Joi.validate(ctx.request.body, schema);
-
-    if(result.error) {
+    if(validation.error) {
         ctx.status = 400;
         return;
     }
 
-    let duplicate;
+    let duplicate = null;
+
     try {
-        duplicate = await User.findById(ctx.request.body);
+        // 체크
+        duplicate = await User.findOne(ctx.request.body);
     } catch(e) {
         ctx.throw(500, e);
     }
@@ -68,5 +71,5 @@ exports.join = async(ctx) => {
         ctx.throw(500, e);
     } // 계정 추가
 
-    // ctx.body = true; // 회원가입 성공 시 true 넘겨주기
+    ctx.body = true; // 회원가입 성공 시 true 넘겨주기
 };

@@ -15,9 +15,7 @@ const userSchema = new mongoose.Schema({
     // favorite:[String]
 });
 
-
-
-userSchema.statics.join = function({ id, email, password }) {
+userSchema.statics.join = function({ id, password, email }) {
     const user = new this({
         id,
         password,

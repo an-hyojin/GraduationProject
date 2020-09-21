@@ -9,7 +9,7 @@ const csv = require("csv-parser");
 const { mongoose } = require("mongoose");
 
 api.use("/songs", songs.routes());
-api.use("./users", users.routes());
+api.use("/users", users.routes());
 const Song = require("../models/song");
 const User = require("../models/user");
 
@@ -56,5 +56,7 @@ api.get("/temp", async (ctx, next) => {
     console.log(error);
   }
 });
+
+
 
 module.exports = api;
