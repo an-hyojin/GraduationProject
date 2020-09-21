@@ -1,9 +1,41 @@
+@import "~bootstrap/dist/css/bootstrap.css";
+@import "../../variable.scss";
+.carousel-control-next,
+.carousel-control-prev {
+  filter: invert(100%);
+  width: 10%;
+}
+
+.carousel-indicators {
+  filter: invert(70%);
+}
+#songContainer {
+  min-height: 35em;
+}
+#song-title {
+  color: $singer-color;
+}
+.lyrics {
+  font-size: 20px;
+  font-weight: 600;
+}
 .a_class {
-  background-color: red;
+  color: red;
 }
 .b_class {
-  background-color: yellow;
+  color: #ffcc00;
 }
 .c_class {
-  background-color: blue;
+  color: blue;
+}
+.kor {
+  font-size: 23px;
+}
+.morph:hover {
+  background-color: #ffff99;
+}
+.dict {
+  position: absolute;
+  top: 70px;
+  right: 30px;
 }

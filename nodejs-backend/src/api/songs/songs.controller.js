@@ -1,4 +1,5 @@
 const Song = require("../../models/song");
+const song = require("../../models/song");
 
 exports.list = async (ctx) => {
   let songs;
@@ -12,12 +13,12 @@ exports.list = async (ctx) => {
 
 exports.post = async (ctx) => {
   console.log(ctx);
-  const { title } = ctx.request.body;
+  const { songId } = ctx.request.body;
 
   let song;
 
   try {
-    song = await Song.find({ title: title }).exec();
+    song = await Song.findById({ _id: songId }).exec();
   } catch (e) {
     return ctx.throw(500, e);
   }
@@ -27,6 +28,17 @@ exports.post = async (ctx) => {
     return;
   }
   ctx.body = song;
+};  
+
+exports.topten = async (ctx) => {
+  let songlist;
+  
+  try{
+    songlist = await Song.find({}, { singer : 1, title : 1, _id : 1}).sort({count : -1}).limit(10).exec();
+  } catch (e) {
+    return ctx.throw(500, e);
+  }
+  ctx.body = songlist;
 };
 /*
 exports.create = async (ctx) => {

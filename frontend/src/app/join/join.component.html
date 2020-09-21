@@ -1,0 +1,67 @@
+<div
+  class="justify-content-center align-items-center outContainer d-flex h-100"
+>
+  <div class="bg-white pt-5 rounded">
+    <h1 class="text-center display-1 text-primary" routerLink="/main">
+      TKDLXMDLFMA
+    </h1>
+    <hr />
+    <div class="p-5 mb-3 mt-3">
+      <h1 class="text-center">Join</h1>
+      <form [formGroup]="joinForm" (ngSubmit)="onSubmit()">
+        <div class="row w-75 mx-auto">
+          <mat-form-field class="formfield" appearance="legacy">
+            <mat-label>Id</mat-label>
+            <input formControlName="id" matInput placeholder="id" />
+
+            <mat-error *ngIf="id.invalid">{{ getIdErrorMessage() }}</mat-error>
+          </mat-form-field>
+          <br />
+
+          <mat-form-field class="formfield" appearance="legacy">
+            <mat-label>Password</mat-label>
+            <input
+              matInput
+              [type]="hide ? 'password' : 'text'"
+              formControlName="password"
+              matInput
+              class="example-right-align"
+            />
+            <mat-error *ngIf="password.invalid">{{
+              getPasswordErrorMessage()
+            }}</mat-error>
+            <button
+              mat-icon-button
+              matSuffix
+              (click)="hide = !hide"
+              [attr.aria-label]="'Hide password'"
+              [attr.aria-pressed]="hide"
+            >
+              <mat-icon>{{ hide ? "visibility_off" : "visibility" }}</mat-icon>
+            </button>
+          </mat-form-field>
+          <br />
+          <mat-form-field class="formfield" appearance="legacy">
+            <mat-label>E-mail</mat-label>
+            <input
+              formControlName="email"
+              type="email"
+              matInput
+              placeholder="e-mail"
+            />
+            <mat-error *ngIf="email.invalid">{{
+              getEmailErrorMessage()
+            }}</mat-error>
+          </mat-form-field>
+          <br />
+          <button
+            class="btn btn-primary btn-block loginButton mt-3"
+            type="submit"
+          >
+            Join
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

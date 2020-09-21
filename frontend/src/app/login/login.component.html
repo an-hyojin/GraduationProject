@@ -1,0 +1,64 @@
+<div class="justify-content-center align-items-center d-flex h-100 bg-white">
+  <div>
+    <h1 class="text-center display-1 text-primary" routerLink="/main">
+      TKDLXMDLFMA
+    </h1>
+    <hr />
+    <div class="p-5 mb-3 mt-3">
+      <h1 class="text-center">Login</h1>
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        <div class="row justify-content-md-center">
+          <div class="col-sm-12 col-md-12 col-lg-10">
+            <mat-form-field class="formfield" appearance="legacy">
+              <mat-label>Id</mat-label>
+              <input formControlName="id" matInput placeholder="Placeholder" />
+              <mat-error *ngIf="id.invalid">{{
+                getIdErrorMessage()
+              }}</mat-error>
+            </mat-form-field>
+
+            <mat-form-field class="formfield" appearance="legacy">
+              <mat-label>Password</mat-label>
+              <input
+                matInput
+                [type]="hide ? 'password' : 'text'"
+                formControlName="password"
+                matInput
+                class="example-right-align"
+              />
+              <mat-error *ngIf="password.invalid">{{
+                getPasswordErrorMessage()
+              }}</mat-error>
+              <button
+                mat-icon-button
+                matSuffix
+                (click)="hide = !hide"
+                [attr.aria-label]="'Hide password'"
+                [attr.aria-pressed]="hide"
+              >
+                <mat-icon>{{
+                  hide ? "visibility_off" : "visibility"
+                }}</mat-icon>
+              </button>
+            </mat-form-field>
+          </div>
+          <div class="col-lg-2">
+            <div class="row h-100 align-items-center">
+              <button
+                class="btn btn-primary loginButton btn-block"
+                type="submit"
+              >
+                Login
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
+      <div class="row">
+        <button class="btn btn-light btn-block mt-3" routerLink="/join">
+          Create an Account
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

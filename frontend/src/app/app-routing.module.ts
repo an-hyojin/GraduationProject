@@ -3,10 +3,18 @@ import { Routes, RouterModule } from '@angular/router';
 import { SongListComponent } from './song-list/song-list.component';
 import { ShowSongComponent } from './show-song/show-song.component';
 
+import { MainComponent } from './main/main.component';
+import { JoinComponent } from './join/join.component';
+import { LoginComponent } from './login/login.component';
+import { SongQuizComponent } from './song-quiz/song-quiz.component';
 const AppRoutes: Routes = [
-  { path: '', redirectTo: 'song-list', pathMatch: 'full' },
-  { path: 'song-list', component: SongListComponent },
-  { path: 'song/:title', component: ShowSongComponent },
+  { path: '', redirectTo: 'main', pathMatch: 'full' },
+  { path: 'main', component: MainComponent },
+  { path: 'song/:songId', component: ShowSongComponent },
+  { path: 'join', component: JoinComponent },
+  { path: 'login', component: LoginComponent },
+  { path: 'quiz/:songId', component: SongQuizComponent },
+  { path: '*', redirectTo: 'main', pathMatch: 'full' }
 ];
 
 export const AppRouterModule = RouterModule.forRoot(AppRoutes, {
