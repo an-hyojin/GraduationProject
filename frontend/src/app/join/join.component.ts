@@ -39,8 +39,12 @@ export class JoinComponent implements OnInit {
   onSubmit() {
     console.log(this.joinForm);
     if (this.joinForm.valid) {
+      let formData = new FormData();
+      formData.append('id', this.joinForm.value.id);
+      formData.append('password', this.joinForm.value.password);
+      formData.append('email', this.joinForm.value.email);
       this.http
-        .post(`${this.apiBaseUrl}/api/join`, this.joinForm.value)
+        .post(`${this.apiBaseUrl}/api/users/join`, formData)
         .subscribe((v) => {
           let result = v['_body'] == 'true';
           if (result) {

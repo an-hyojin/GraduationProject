@@ -38,11 +38,18 @@ export class LoginComponent implements OnInit {
   }
   onSubmit() {
     console.log(this.loginForm.value);
+    console.log(this.loginForm.valid);
+
     if (this.loginForm.valid) {
+      let formData = new FormData();
+      formData.append('id', this.loginForm.value.id);
+      formData.append('password', this.loginForm.value.password);
+      console.log(`${this.apiBaseUrl}/api/users/login`);
       this.http
-        .post(`${this.apiBaseUrl}/api/login`, this.loginForm.value)
+        .post(`${this.apiBaseUrl}/api/users/login`, formData)
         .subscribe((v) => {
-          let id = v['_body'];
+          console.log(v);
+          let id = JSON.parse(v['_body'])._id;
           console.log(id);
           if (!!id) {
             localStorage.setItem('auth', id);

@@ -17,6 +17,7 @@ export class MainComponent implements OnInit {
   id: string;
   ngOnInit(): void {
     console.log(!localStorage.getItem('auth'));
+
     if (!!localStorage.getItem('auth')) {
       this.getUser(localStorage.getItem('auth')).subscribe((v) => {
         this.user = new User(JSON.parse(v._body));
@@ -40,6 +41,6 @@ export class MainComponent implements OnInit {
     let options = new RequestOptions({
       headers: headers,
     });
-    return this.http.post(`${this.apiBaseUrl}/api/user`, body, options);
+    return this.http.post(`${this.apiBaseUrl}/api/users/info`, body, options);
   }
 }

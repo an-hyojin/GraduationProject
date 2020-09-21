@@ -3,16 +3,19 @@ const request = require("request");
 const api = new Router();
 
 const songs = require("./songs");
+const users = require("./users");
 const fs = require("fs");
 const csv = require("csv-parser");
 const { mongoose } = require("mongoose");
+
 api.use("/songs", songs.routes());
+api.use("/users", users.routes());
 const Song = require("../models/song");
 const Word = require("../models/word");
 const User = require("../models/user");
 var end = new Promise(function (resolve, reject) {
   let results = [];
-  fs.createReadStream("../../GoodSong.csv")
+  fs.createReadStream("../GoodSong.csv")
     .pipe(csv())
     .on("data", async (data) => await results.push(data))
     .on("end", async () => {
@@ -171,20 +174,4 @@ api.get("/temp", async (ctx, next) => {
     ctx.body = error;
   }
 });
-api.post("/user", async (ctx, next) => {
-  const { id } = ctx.request.body;
-  let user = await User.findById({ _id: id }, { password: 0 }).exec();
-  let res = await Song.find({}, { singer: 1, title: 1 })
-    .where("_id")
-    .in(user.learning)
-    .exec();
-
-  let learn = [];
-  res.forEach((v) => {
-    learn.push(JSON.stringify(v));
-  });
-  user.learning = learn;
-  ctx.body = user;
-});
-
 module.exports = api;

@@ -53,7 +53,11 @@
                       }"
                       [ngbTooltip]="song.morphs_trans[5 * i + j][k]"
                       (click)="
-                        dictionary(morph, song.morphs_trans[5 * i + j][k])
+                        dictionary(
+                          morph,
+                          song.morphs_trans[5 * i + j][k],
+                          song.pos_list[5 * i + j][k]
+                        )
                       "
                       >{{ morph }}</span
                     ></span
@@ -98,6 +102,8 @@
     </button>
     <h4>words</h4>
     <span>: {{ dict.morph }}</span>
+    <h4>root</h4>
+    <span>: {{ dict.root }}</span>
     <h4>means</h4>
     <span>: {{ dict.trans }}</span>
   </div>

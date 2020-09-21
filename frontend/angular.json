@@ -91,11 +91,7 @@
             "karmaConfig": "karma.conf.js",
             "assets": ["src/favicon.ico", "src/assets"],
             "styles": [
-<<<<<<< HEAD
               "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
-=======
-              "/node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
->>>>>>> 91cf10ae89da900b6e2b4647f88f03962fecb3b1
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "src/styles.scss"
             ],

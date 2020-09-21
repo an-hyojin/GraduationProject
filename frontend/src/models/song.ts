@@ -9,6 +9,7 @@ export class Song {
   b_list: [[number]];
   c_list: [[number]];
   count_list: [[number]];
+  pos_list: [[string]];
   morphs: [[string]];
   morphs_trans: [[string]];
   album: string;
@@ -25,6 +26,7 @@ export class Song {
     o.sentences = json.sentences;
     o.translation = json.translation;
     o.count_list = json.count_list;
+    o.pos_list = json.pos_list;
     o.morphs = json.morphs;
     o.a_list = json.a_list;
     o.b_list = json.b_list;
@@ -35,6 +37,5 @@ export class Song {
     o.morphs_trans = json.morphs_trans;
     console.log(json);
     return o;
-
   }
 }

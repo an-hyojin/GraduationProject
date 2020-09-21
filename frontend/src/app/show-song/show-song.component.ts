@@ -54,15 +54,20 @@ export class ShowSongComponent implements OnInit {
   goQuiz() {
     this.router.navigate(['/quiz', this.songId]);
   }
-  dictionary(morph: string, trans: string) {
-    this.dict = new DictDiv(morph, trans);
+  dictionary(morph: string, trans: string, pos: string) {
+    // 클릭하는 부분 - morph:형태소, trans: 번역본, pos:원형
+    // morph가 들리게
+    console.log(morph, trans, pos);
+    this.dict = new DictDiv(morph, trans, pos);
   }
 }
 class DictDiv {
   morph: string;
   trans: string;
-  constructor(morph: string, trans: string) {
+  root: string;
+  constructor(morph: string, trans: string, root: string) {
     this.morph = morph;
     this.trans = trans;
+    this.root = root;
   }
 }
