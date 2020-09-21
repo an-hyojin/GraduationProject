@@ -20,13 +20,14 @@ export class SongQuizComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router
   ) {}
-
+  solve: boolean = false;
   userName: String;
   sentence: String[] = [];
   questionList: String[] = [];
-  answerList: String[] = [];
-  questionTrans: String;
   id: string;
+  answerList: String[][] = [];
+  questionTrans: String[] = [];
+  arrayQuizzes: String[][] = [];
   songId: String;
   title: string;
   singer: string;
@@ -56,21 +57,24 @@ export class SongQuizComponent implements OnInit {
   quizzes: Quiz[] = [];
   examples: string[][] = [];
   answer: string[] = [];
+  test: String;
   ngOnInit(): void {
     this.songId = this.route.snapshot.paramMap.get('songId');
     this.id = localStorage.getItem('id');
-    var index = Math.floor(Math.random() * (20 - 1));
     this.getSong().subscribe((v) => {
       this.song = Song.parseFrom(JSON.parse(v._body));
-      this.sentence = this.song.sentences.splice(index, 1);
-      this.questionList = this.sentence[0].split(' ');
-      for (var i = 0; i < this.questionList.length; i++) {
-        this.answerList[i] = this.questionList[i];
+      for (var i = 0; i < 2; i++) {
+        var index = Math.floor(Math.random() * 23);
+        this.sentence = this.song.sentences.splice(index, 1);
+        this.questionList = this.sentence[0].split(' ');
+        this.answerList.push(this.sentence[0].split(' '));
+        this.questionList.sort(() => Math.random() - 23);
+        this.questionTrans.push(this.song.translation[index]);
+        console.log(this.song.translation[index]);
+        this.arrayQuizzes.push(this.questionList);
       }
-      this.shuffle(this.questionList);
-      this.questionTrans = this.song.translation[index];
     });
-    this.getQuiz().subscribe((v) => {
+    this.getQuiz().subscribe(async (v) => {
       JSON.parse(v._body).forEach((element) => {
         const quiz = new Quiz(element);
         this.quizzes.push(quiz);
@@ -80,9 +84,9 @@ export class SongQuizComponent implements OnInit {
         answers.push(quiz.answer);
         quiz.example.forEach((v) => answers.push(v));
         answers.sort(() => Math.random() - Math.random());
-        this.answer.push('');
+        this.answer.push(quiz.answer);
+        this.solve = true;
         this.examples.push(answers);
-        console.log(this.quizzes);
       });
     });
   }
@@ -91,19 +95,40 @@ export class SongQuizComponent implements OnInit {
     this.answer[num] = ans;
   }
 
-  shuffle(array): void {
-    array.sort(() => Math.random() - 0.5);
+  drop(event: CdkDragDrop<string[]>, index) {
+    moveItemInArray(
+      this.arrayQuizzes[index],
+      event.previousIndex,
+      event.currentIndex
+    );
   }
-
-  drop(event: CdkDragDrop<string[]>) {
-    moveItemInArray(this.questionList, event.previousIndex, event.currentIndex);
-  }
-
   checkAnswer(): void {
-    if (this.answerList == this.questionList) {
-      alert('correct!!');
-    } else {
-      alert('Oops!');
+    let a = 0;
+    let b = 0;
+    let c = 0;
+    for (let i = 0; i < this.quizzes.length; i++) {
+      if (!this.answer[i]) {
+        alert('You have to solve Problem' + (i + 1));
+        break;
+      }
+      if (this.answer[i] != this.quizzes[i].answer) {
+        switch (this.quizzes[i].level) {
+          case 'A':
+            a++;
+            break;
+          case 'B':
+            b++;
+            break;
+          case 'C':
+            c++;
+            break;
+        }
+      }
+      console.log(this.answer[i]);
+      console.log(this.quizzes[i].answer);
     }
+    console.log(a, b, c);
+    this.solve = true;
+    console.log(this.solve);
   }
 }

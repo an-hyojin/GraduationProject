@@ -27,6 +27,7 @@ class SongSerializer(serializers.Serializer):
     a_quiz_info = serializers.ListField(child=QuizSerializer())
     b_quiz_info = serializers.ListField(child=QuizSerializer())
     c_quiz_info = serializers.ListField(child=QuizSerializer())
+    count = serializers.IntegerField()
    
 class WordSerializer(serializers.Serializer):
     pos = serializers.CharField(max_length=4)

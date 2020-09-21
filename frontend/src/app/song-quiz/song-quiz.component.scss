@@ -48,10 +48,8 @@
   margin: 0 auto;
 }
 .content {
-  width: 80%;
-  height: 70%;
   margin: 0 auto;
-  margin-top: 70px;
+  margin-top: 50px;
 }
 .question {
   text-align: center;
@@ -93,4 +91,12 @@
 #trans {
   margin: 30px;
   font-size: 20px;
+}
+
+.true_answer {
+  color: green;
+}
+
+.false_answer {
+  color: red;
 }

@@ -26,6 +26,7 @@ const songSchema = new mongoose.Schema({
   a_quiz_info: [quizSchema],
   b_quiz_info: [quizSchema],
   c_quiz_info: [quizSchema],
+  count: Number,
 });
 // 스키마 -> 모델 변환
 // 첫 번째 param -> 스키마 이름, 두 번째 param -> 스키마 객체

@@ -48,7 +48,6 @@ export class ShowSongComponent implements OnInit {
         }
         this.songslice.push(shows);
       }
-      console.log(this.songslice);
     });
     this.userName = 'USER1';
   }

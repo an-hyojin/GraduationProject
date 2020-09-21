@@ -139,12 +139,10 @@ async function makeQuiz(quiz_info, song) {
   return quiz;
 }
 api.get("/temp", async (ctx, next) => {
-  console.log("here 11");
   let results = await end;
-  console.log("here 12");
   let body = [];
   ctx.body = "호출";
-  for (i = 10; i < 12; i++) {
+  for (i = 14; i < 16; i++) {
     body.push(results[i]);
   }
   const uri = "http://localhost:8000/nlp/preprocessing/";

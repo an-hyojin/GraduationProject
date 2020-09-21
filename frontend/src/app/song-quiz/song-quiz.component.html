@@ -30,7 +30,7 @@
                 active: word == answer[num]
               }"
             >
-              <input type="radio" (click)="select(num, word)" />
+              <input type="radio" [value]="word" (click)="select(num, word)" />
               {{ j + 1 }}
             </label>
             <span class="display-6">&nbsp; {{ word }}</span>
@@ -51,36 +51,105 @@
           </button>
         </div>
       </mat-step>
-      <mat-step>
-        <div class="content" *ngIf="!!song">
-          <ng-template matStepLabel>Problem 4</ng-template>
 
-          <div class="question">
-            <h2>List the words in the correct order</h2>
+      <mat-step *ngFor="let quiz of arrayQuizzes; index as num">
+        <div *ngIf="!!song">
+          <ng-template matStepLabel
+            >Problem {{ num + quizzes.length + 1 }}</ng-template
+          >
+          <h1>
+            <span class="display-4 font-weight-bold"
+              >Q{{ num + quizzes.length + 1 }}.</span
+            >
+            <span>List the words in the correct order</span>
+          </h1>
+          <div class="question content">
             <div
               class="lyrics"
               cdkDropList
               cdkDropListOrientation="horizontal"
-              (cdkDropListDropped)="drop($event)"
+              (cdkDropListDropped)="drop($event, num)"
             >
-              <p *ngFor="let morph of questionList; index as i">
-                <span class="kor" cdkDrag>{{ morph }}</span>
+              <p *ngFor="let morph of quiz; index as i">
+                <span class="kor" *ngIf="morph != ''" cdkDrag>{{ morph }}</span>
               </p>
             </div>
-            <p id="trans">{{ questionTrans }}</p>
-
-            <button class="btn btn-primary" (click)="checkAnswer()">
-              SUBMIT
-            </button>
+            <p id="trans">{{ questionTrans[num] }}</p>
           </div>
         </div>
         <div class="d-flex justify-content-center">
           <button class="btn-light" mat-icon-button matStepperPrevious>
             <mat-icon>navigate_before</mat-icon>
           </button>
+          <button
+            mat-icon-button
+            class="btn-light"
+            *ngIf="num != arrayQuizzes.length - 1"
+            matStepperNext
+          >
+            <mat-icon>navigate_next</mat-icon>
+          </button>
         </div>
       </mat-step>
     </mat-horizontal-stepper>
+    <div class="row d-flex align-items-center">
+      <button
+        (click)="checkAnswer()"
+        class="btn btn-primary text-center mx-auto"
+        data-toggle="modal"
+        data-target="#answerModal"
+      >
+        SUBMIT
+      </button>
+    </div>
   </div>
-  <ng-template #load><h1>Loading...</h1></ng-template>
+
+  <ng-template #load>
+    <h1>Loading...</h1>
+  </ng-template>
+</div>
+<div
+  id="answerModal"
+  role="dialog"
+  class="modal fade"
+  role="dialog"
+  aria-hidden="!solve"
+>
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content p-5">
+      <div class="modal-header">
+        <span class="display-5">Check Your Answer</span>
+      </div>
+      <div *ngFor="let quiz of quizzes; index as num">
+        <span
+          class="display-6 font-weight-bold"
+          [ngClass]="{
+            true_answer: answer[num] == quiz.answer,
+            false_answer: answer[num] != quiz.answer
+          }"
+          >Q{{ num + 1 }}.
+        </span>
+        <span class="display-6" *ngFor="let morph of quiz.morphs; index as i">
+          <span *ngIf="quiz.count_list.includes(i)">&nbsp;</span>
+          <span *ngIf="i != quiz.morph_index; else blank">{{ morph }}</span>
+          <ng-template #blank>
+            <span
+              class="font-weight-bold"
+              [ngClass]="{
+                true_answer: answer[num] == quiz.answer,
+                false_answer: answer[num] != quiz.answer
+              }"
+              >{{ morph }}</span
+            >
+          </ng-template>
+        </span>
+        <div>
+          Your Answer : {{ answer[num] }}<br />
+          True Answer : {{ quiz.answer }}
+        </div>
+
+        <br />
+      </div>
+    </div>
+  </div>
 </div>

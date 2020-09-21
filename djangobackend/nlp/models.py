@@ -22,6 +22,7 @@ class Song:
     self.a_quiz_info = a_quiz_info
     self.b_quiz_info = b_quiz_info
     self.c_quiz_info = c_quiz_info
+    self.count = 0
     
 class Quiz:
   def __init__(self, sentence_index, morph_index, pos):
