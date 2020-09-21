@@ -3,13 +3,17 @@ const request = require("request");
 const api = new Router();
 
 const songs = require("./songs");
+const users = require("./users");
 const fs = require("fs");
 const csv = require("csv-parser");
 const { mongoose } = require("mongoose");
+
 api.use("/songs", songs.routes());
+api.use("/users", users.routes());
 const Song = require("../models/song");
 const Word = require("../models/word");
 const User = require("../models/user");
+
 var end = new Promise(function (resolve, reject) {
   let results = [];
   fs.createReadStream("../../GoodSong.csv")
@@ -18,14 +22,6 @@ var end = new Promise(function (resolve, reject) {
     .on("end", async () => {
       resolve(results);
     });
-});
-
-api.post("/login", async (ctx, next) => {
-  ctx.body = "5f62611948d30c856453851b";
-});
-
-api.post("/join", async (ctx, next) => {
-  ctx.body = true;
 });
 
 api.get("/words", async (ctx, next) => {
@@ -186,5 +182,7 @@ api.post("/user", async (ctx, next) => {
   user.learning = learn;
   ctx.body = user;
 });
+
+
 
 module.exports = api;

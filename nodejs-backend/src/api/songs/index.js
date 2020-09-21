@@ -9,4 +9,6 @@ songs.post("/", songsCtrl.post);
 
 songs.get("/", songsCtrl.list);
 
+songs.get("/topten", songsCtrl.topten);
+
 module.exports = songs;
