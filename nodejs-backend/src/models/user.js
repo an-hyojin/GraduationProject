@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const crypto = require('crypto');
 
 const userSchema = new mongoose.Schema({
     id : {
@@ -12,20 +13,29 @@ const userSchema = new mongoose.Schema({
         trim : true
     },
     email : String
-    // favorite:[String]
+    // favorite : [String]
 });
+
+function hash(password) {
+    return crypto.createHmac('sha256', process.env.SECRET_KEY).update(password).digest('hex');
+}
 
 userSchema.statics.join = function({ id, password, email }) {
     const user = new this({
         id,
-        password,
+        password : hash(password),
         email
     });
     return user.save();
-} // 회원가입
+}; // 회원가입
 
 userSchema.statics.findByUser = function(id) {
     return this.findOne({ id }).exec();
-}
+};
+
+userSchema.methods.validatePassword = function(password) {
+    const hashed = hash(password);
+    return this.password === hashed;
+};
 
 module.exports = mongoose.model('User', userSchema);

@@ -24,7 +24,7 @@ app.use(cors(corsOptions)); // config 추가
 mongoose.Promise = global.Promise; // Node 의 네이티브 Promise 사용
 // mongodb 연결
 mongoose.connect(process.env.MONGO_URI, {
-    usemongoClient:true,
+    //usemongoClien:true,
     useNewUrlParser:true,
     useUnifiedTopology:true
 }).then(
@@ -46,6 +46,4 @@ app.listen(port, () => {
     console.log('heurm server is listening to port ' + port);
 });
 
-
-// app.use('/', router);
 const scheduler = require('./batch') // 스케쥴러 설정

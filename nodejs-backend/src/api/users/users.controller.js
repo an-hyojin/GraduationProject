@@ -5,7 +5,7 @@ const User = require('../../models/user');
 exports.login = async(ctx) => {
     const schema = Joi.object({
         id : Joi.string().required(),
-        password : Joi.string().required()
+        password : Joi.string().required(),
     }); // 데이터 검증
 
     const result = schema.validate(ctx.request.body);
@@ -26,9 +26,8 @@ exports.login = async(ctx) => {
         ctx.throw(500, e);
     }
 
-    if(!user) { // if(!user || user.validatePassword(password))
+    if(!user || !user.validatePassword(password)) {
         ctx.status = 403;
-        ctx.body = { message : "user not found" };
         return;
     } // db에 없거나 비밀번호 틀리면 X
     ctx.body = user;
@@ -40,6 +39,7 @@ exports.join = async (ctx) => {
         id : Joi.string().required(),
         password : Joi.string().required(),
         email : Joi.string().required().email()
+        //favorite : Joi.string().required()
     }); // 데이터 검증
     
     const validation = schema.validate(ctx.request.body);
@@ -53,7 +53,7 @@ exports.join = async (ctx) => {
 
     try {
         // 체크
-        duplicate = await User.findOne(ctx.request.body);
+        duplicate = await User.findByUser(ctx.request.body.id);
     } catch(e) {
         ctx.throw(500, e);
     }
