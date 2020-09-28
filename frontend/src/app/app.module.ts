@@ -21,6 +21,8 @@ import { JoinComponent } from './join/join.component';
 import { HeadComponent } from './head/head.component';
 import { SongQuizComponent } from './song-quiz/song-quiz.component';
 import { HttpModule } from '@angular/http';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -48,6 +50,7 @@ import { HttpModule } from '@angular/http';
     DragDropModule,
     BrowserAnimationsModule,
     MatFormFieldModule,
+    MatAutocompleteModule,
   ],
   providers: [],
   bootstrap: [AppComponent],

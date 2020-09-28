@@ -2,9 +2,21 @@
     
 <mat-form-field class="formfield" appearance="fill">
     <mat-label>Title or Singer</mat-label>
-    <input [formControl]="songInfo" matInput placeholder="Placeholder">
+    <input [formControl]="songInfo" matInput placeholder="Placeholder" id="search-form">
+    <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
+        <mat-option *ngFor="let song of songList; index as i">
+            {{song.singer}}
+        </mat-option>
+    </mat-autocomplete>
 </mat-form-field>
-<button class="btn btn-dark">Search</button>
-
+<button class="btn btn-dark" (click)="search()">Search</button>
+<div id="result-form" >
+    <div class="result-item" *ngFor="let song of songList; index as i">
+        <div *ngIf="song.title==searchWord || song.singer==searchWord">
+            <span>{{song.title}}</span>
+            <span>{{song.singer}}</span>
+        </div>
+    </div>
+</div>
 
 </div>

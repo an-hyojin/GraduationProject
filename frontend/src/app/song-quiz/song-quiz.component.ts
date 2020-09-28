@@ -84,7 +84,7 @@ export class SongQuizComponent implements OnInit {
         answers.push(quiz.answer);
         quiz.example.forEach((v) => answers.push(v));
         answers.sort(() => Math.random() - Math.random());
-        this.answer.push(quiz.answer);
+        this.answer.push('');
         this.solve = true;
         this.examples.push(answers);
       });
@@ -101,6 +101,7 @@ export class SongQuizComponent implements OnInit {
       event.previousIndex,
       event.currentIndex
     );
+    console.log(this.arrayQuizzes[index]);
   }
   checkAnswer(): void {
     let a = 0;
@@ -123,7 +124,7 @@ export class SongQuizComponent implements OnInit {
             c++;
             break;
         }
-      }
+      } 
       console.log(this.answer[i]);
       console.log(this.quizzes[i].answer);
     }

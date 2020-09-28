@@ -147,9 +147,28 @@
           Your Answer : {{ answer[num] }}<br />
           True Answer : {{ quiz.answer }}
         </div>
-
-        <br />
       </div>
+      <div *ngFor="let quiz of arrayQuizzes; index as num">
+        <span
+          class="display-6 font-weight-bold"
+          [ngClass]="{
+           true_answer: quiz == answerList[num],
+           false_answer: quiz != answerList[num]
+          }"         
+          >Q{{  num + quizzes.length + 1 }}.
+        </span>
+        <span class="display-6" *ngFor="let morph of quiz; index as i">
+          <span *ngIf="morph == answerList[num][i]" class=" font-weight-bold true_answer">{{ morph }}</span>
+          <span>&nbsp;</span>
+          <span
+          *ngIf="morph != answerList[num][i]"
+              class="font-weight-bold false_answer"
+              >{{ morph }}</span
+            >
+        </span>
+        <div>
+          True Answer : {{ answerList[num] }}
+        </div>
     </div>
   </div>
 </div>
