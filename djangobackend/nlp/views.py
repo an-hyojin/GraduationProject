@@ -5,6 +5,12 @@ from .serializers import SongSerializer, WordSerializer
 from konlpy.tag import Okt
 from konlpy.tag import Kkma
 from selenium import webdriver
+from pymongo import MongoClient
+from sklearn.cluster import KMeans
+from bson.objectid import ObjectId
+from sklearn.metrics.pairwise import cosine_similarity
+from collections import Counter
+
 
 import re
 import time
@@ -15,6 +21,11 @@ import os
 import sys
 import urllib.request
 import csv
+import pymongo
+import dns
+import ssl
+import pandas as pd
+
 _client_id = "au7Pqz4nAV0GdI9eHWVg" # 개발자센터에서 발급받은 Client ID 값
 _client_secret = "FTTueiV1Gy" # 개발자센터에서 발급받은 Client Secret 값
 
@@ -22,9 +33,52 @@ _json_res = [{"singer":"싹쓰리(유두래곤, 린다G, 비룡)","title":"다�
 _dic = {}
 _temp_dic = {}
 _word_dic = {}
+_client = MongoClient('mongodb+srv://hyojin:graducnu2020@graducnu2020.7au9v.mongodb.net/song?retryWrites=true&w=majority', ssl=True, ssl_cert_reqs=ssl.CERT_NONE)
+
+_db = _client.song
+_songdb = _db.songs
+_userdb = _db.users
+
+def make_cluster_songs(cluster_num=3):
+    abc = []
+    title = []
+    for song in _songdb.find(projection={'_id': True, 'a_count':True, 'b_count':True,'c_count':True}):
+        title.append(song['_id'])
+        a = song['a_count']
+        b = song['b_count']
+        c = song['c_count']
+        count = a+b+c
+        abc.append([a/count, b/count,c/count])    
+    abcDf = pd.DataFrame(data=abc, index=title, columns=['a','b','c'])
+    model = KMeans(n_clusters=cluster_num)
+    kmeans = model.fit_predict(abcDf)
+    kmeansData = pd.DataFrame(data=kmeans, columns=['clusterNum'])
+    kmeansData['songId'] = abcDf.index
+    return kmeansData, model
+
+def init_user_learn_frame():
+    user_learn_frame = pd.DataFrame(columns=['userId', 'songId', 'count'])
+    for user in _userdb.find(projection={'_id':True, 'learning':True}):
+        _id = str(user['_id'])
+        if 'learning' in user:
+            user_learn = {}
+            for learn in user['learning']:
+                learn_item = learn['learning']
+                if learn_item not in user_learn:
+                    user_learn[learn_item]= 0
+                user_learn[learn_item]+=1
+            data_frame = pd.DataFrame(data=list(user_learn.items()), columns=['songId', 'count'])
+            data_frame['userId'] = _id
+            user_learn_frame = pd.concat([user_learn_frame,data_frame])
+    user_learn_pivot_table = user_learn_frame.pivot_table(values='count', columns='userId', index='songId',aggfunc=sum).fillna(0)
+    item_based_collabor = cosine_similarity(user_learn_pivot_table)
+    item_based_collabor = pd.DataFrame(data=item_based_collabor, index=user_learn_frame['songId'], columns=user_learn_frame['songId'])
+    return item_based_collabor
+
+_kmeansCluster, _model = make_cluster_songs(3)
+_item_based_collabor = init_user_learn_frame()
 
 with open('../../words.csv', 'rt', encoding='UTF8') as data:
-
     regex = re.compile('[0-9]') # 가다01 가다02 이런식으로 되어있는 것들 제거하기 위함
     csv_reader = csv.reader(data)
     next(csv_reader) # 헤더 읽음 처리
@@ -41,31 +95,50 @@ with open('../../words.csv', 'rt', encoding='UTF8') as data:
         _temp_dic[word][word_list[2]]=word_list[4]
         _dic[word] = word_list[4]
         _word_dic[word] = word_list[2]
-    print(_temp_dic)
+  
+
 
 @api_view(['GET','POST'])
-def word(request):
-    result = []
-    for word in _dic.keys():
-        if _word_dic[word] in ["명", "형", "동", "부"]:
-            result.append(WordSerializer(Word(_word_dic[word], word)).data)
-    return Response(result)
-
-@api_view(['GET','POST'])
-def test(request):
-    # word = '가끔'
-    # if word in _dic and _word_dic[word] in ["명", "형", "동", "부"]:
-    #     print(_dic[word])
-    #     print(_word_dic[word])
-    # a_quiz = []
-    # a_quiz.append(Temp(1,2,"A"))
-    # a_quiz.append(Temp(1,2,"A"))
-    # b_quiz = []
-    # b_quiz.append(Temp(1,2,"A"))
-    # b_quiz.append(Temp(1,2,"A"))
+def recommendSongs(request, id):
+    user = _userdb.find_one({'_id':ObjectId(id) }, projection={'_id':False,'learning':True, 'a':True ,'b':True, 'c':True})
+    learn = []
+    if 'learning' in user:
+        for item in user['learning'][-10:]:
+            learn.append(item['learning'])
+    learn.reverse()
     
-    # res = Container(a_quiz, b_quiz)
-    return Response(request)
+    learn_item_add = Counter()
+    weight = 1
+    for songId in learn:
+        now_song_counter = Counter((_item_based_collabor[songId].sort_values(ascending=False)[1:]*weight).to_dict())
+        weight -= 0.1
+        learn_item_add = learn_item_add+now_song_counter
+    
+    learn_dict = dict(learn_item_add)
+    user_a = user['a']
+    user_b = user['b']
+    user_c = user['c']
+    all_count = user_a+user_b+user_c
+
+    recommend_id = []
+    clusterSong = None
+
+    if(all_count!=0):
+        user_a = user_a/all_count
+        user_b = user_b/all_count
+        user_c = user_c/all_count
+        user_cluster_num = _model.predict([[user_a, user_b,user_c]])
+        clusterSong = _kmeansCluster[_kmeansCluster['clusterNum']==user_cluster_num[0]]['songId']
+    
+    if clusterSong is not None:
+        for song in clusterSong:
+            if str(song) in learn_dict:
+                recommend_id.append(str(song))
+    
+    if len(recommend_id)<4:
+        recommend_id = list(map(lambda objid: str(objid),clusterSong))
+    
+    return Response(recommend_id)
 
 
 @api_view(['GET','POST'])
@@ -286,3 +359,4 @@ def add_counts_array(sentence, lyrics_token_list):
             space_indexes.append(i)
         last_index += len(word)
     return space_indexes
+

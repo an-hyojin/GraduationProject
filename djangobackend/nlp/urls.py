@@ -1,11 +1,11 @@
 # nlp의 url 을 설정
 
 from django.urls import path, include
-from .views import getSongs, preprocessing, test, word
+from .views import getSongs, preprocessing, recommendSongs
 
 urlpatterns = [
     path("crawling/", getSongs),
     path("preprocessing/", preprocessing),
-    path("test/", test),
-    path("words/", word),
+    path("recommend/<str:id>", recommendSongs),
+   
 ]
