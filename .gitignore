@@ -1,3 +1,5 @@
 db/
+venv/
+server_mongo/
 nodejs-backend/GoodSong.csv
 .DS_Store
