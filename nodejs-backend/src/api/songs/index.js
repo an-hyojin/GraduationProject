@@ -11,4 +11,5 @@ songs.get("/", songsCtrl.list);
 
 songs.get("/topten", songsCtrl.topten);
 
+songs.get("/recommend/:userId", songsCtrl.recommend);
 module.exports = songs;

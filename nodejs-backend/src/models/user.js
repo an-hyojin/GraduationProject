@@ -1,6 +1,10 @@
 const mongoose = require("mongoose");
 const crypto = require("crypto");
 
+const learnSchema = new mongoose.Schema({
+  learning: String,
+});
+
 const userSchema = new mongoose.Schema({
   id: {
     type: String,
@@ -13,7 +17,10 @@ const userSchema = new mongoose.Schema({
     trim: true,
   },
   email: String,
-  learning: [String],
+  learning: [learnSchema],
+  a: { type: Number, default: 0 },
+  b: { type: Number, default: 0 },
+  c: { type: Number, default: 0 },
   // favorite : [String]
 });
 
