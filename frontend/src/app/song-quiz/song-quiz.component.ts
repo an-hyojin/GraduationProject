@@ -15,6 +15,7 @@ import { Quiz } from 'src/models/quiz';
 export class SongQuizComponent implements OnInit {
   private apiBaseUrl = environment.apiBaseUrl;
   song: Song;
+
   constructor(
     private http: Http,
     private route: ActivatedRoute,
@@ -25,9 +26,11 @@ export class SongQuizComponent implements OnInit {
   sentence: String[] = [];
   questionList: String[] = [];
   id: string;
-  answerList: String[][] = [];
+
   questionTrans: String[] = [];
   arrayQuizzes: String[][] = [];
+  answerList: String[][] = [];
+
   songId: String;
   title: string;
   singer: string;
@@ -40,7 +43,10 @@ export class SongQuizComponent implements OnInit {
     let options = new RequestOptions({
       headers: headers,
     });
-    return this.http.get(`${this.apiBaseUrl}/api/quiz/` + this.songId, options);
+    return this.http.get(
+      `${this.apiBaseUrl}/api/quizzes/` + this.songId,
+      options
+    );
   }
 
   getSong(): Observable<any> {
@@ -110,7 +116,7 @@ export class SongQuizComponent implements OnInit {
     for (let i = 0; i < this.quizzes.length; i++) {
       if (!this.answer[i]) {
         alert('You have to solve Problem' + (i + 1));
-        break;
+        return;
       }
       if (this.answer[i] != this.quizzes[i].answer) {
         switch (this.quizzes[i].level) {
@@ -124,12 +130,37 @@ export class SongQuizComponent implements OnInit {
             c++;
             break;
         }
-      } 
-      console.log(this.answer[i]);
-      console.log(this.quizzes[i].answer);
+      }
     }
     console.log(a, b, c);
-    this.solve = true;
+    if (!this.solve) {
+      this.solve = true;
+      let count = 0;
+      for (let i = 0; i < this.answerList.length; i++) {
+        if (
+          JSON.stringify(this.answerList[i]) !==
+          JSON.stringify(this.arrayQuizzes[i])
+        ) {
+          count++;
+        }
+      }
+
+      let body = {
+        songId: this.songId,
+        userId: this.id,
+        a: a,
+        b: b,
+        c: c,
+        count: count,
+      };
+      let headers = new Headers({
+        'Cache-Control': 'no-cache',
+      });
+      let options = new RequestOptions({
+        headers: headers,
+      });
+      this.http.post(`${this.apiBaseUrl}/api/quizzes/`, body, options);
+    }
     console.log(this.solve);
   }
 }

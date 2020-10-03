@@ -1,0 +1,18 @@
+@import "../../variable.scss";
+
+@each $label, $map in $displays {
+  .#{$label} {
+    font-size: map-get($map, font-size);
+    font-weight: map-get($map, font-weight);
+    line-height: 1.3;
+  }
+}
+#recommendHeader {
+  color: $singer-color;
+}
+.active {
+  display: block;
+}
+.hidden {
+  display: none;
+}

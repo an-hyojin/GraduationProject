@@ -6,7 +6,7 @@
       ><small class="text-muted">{{ singer }}</small>
     </h1>
   </div>
-  <div *ngIf="quizzes.length != 0; else load">
+  <div *ngIf="quizzes.length != 0; else spinner">
     <mat-horizontal-stepper linear #stepper>
       <mat-step *ngFor="let quiz of quizzes; index as num">
         <ng-template matStepLabel>Problem {{ num + 1 }}</ng-template>
@@ -104,16 +104,18 @@
     </div>
   </div>
 
-  <ng-template #load>
-    <h1>Loading...</h1>
+  <ng-template #spinner>
+    <div class="d-flex justify-content-center">
+      <mat-spinner></mat-spinner>
+    </div>
   </ng-template>
 </div>
 <div
   id="answerModal"
   role="dialog"
   class="modal fade"
-  role="dialog"
   aria-hidden="!solve"
+  *ngIf="!!solve"
 >
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content p-5">
@@ -152,23 +154,26 @@
         <span
           class="display-6 font-weight-bold"
           [ngClass]="{
-           true_answer: quiz == answerList[num],
-           false_answer: quiz != answerList[num]
-          }"         
-          >Q{{  num + quizzes.length + 1 }}.
+            true_answer: quiz == answerList[num],
+            false_answer: quiz != answerList[num]
+          }"
+          >Q{{ num + quizzes.length + 1 }}.
         </span>
         <span class="display-6" *ngFor="let morph of quiz; index as i">
-          <span *ngIf="morph == answerList[num][i]" class=" font-weight-bold true_answer">{{ morph }}</span>
+          <span
+            *ngIf="morph == answerList[num][i]"
+            class="font-weight-bold true_answer"
+            >{{ morph }}</span
+          >
           <span>&nbsp;</span>
           <span
-          *ngIf="morph != answerList[num][i]"
-              class="font-weight-bold false_answer"
-              >{{ morph }}</span
-            >
+            *ngIf="morph != answerList[num][i]"
+            class="font-weight-bold false_answer"
+            >{{ morph }}</span
+          >
         </span>
-        <div>
-          True Answer : {{ answerList[num] }}
-        </div>
+        <div>True Answer : {{ answerList[num] }}</div>
+      </div>
     </div>
   </div>
 </div>
