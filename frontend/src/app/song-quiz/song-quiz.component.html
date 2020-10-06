@@ -113,13 +113,12 @@
   role="dialog"
   class="modal fade"
   role="dialog"
-  aria-hidden="!solve"
+  *ngIf="solve"
 >
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content p-5">
       <div class="modal-header">
         <span class="display-5">Check Your Answer</span>
-        <span>{{solve}}</span>
       </div>
       <div *ngFor="let quiz of quizzes; index as num">
         <span
@@ -153,8 +152,8 @@
         <span
           class="display-6 font-weight-bold"
           [ngClass]="{
-           true_answer: quiz == answerList[num],
-           false_answer: quiz != answerList[num]
+           true_answer: correctList.includes(quiz),
+           false_answer: !correctList.includes(quiz)
           }"         
           >Q{{  num + quizzes.length + 1 }}.
         </span>
@@ -166,9 +165,14 @@
               class="font-weight-bold false_answer"
               >{{ morph }}</span
             >
+            <span>&nbsp;</span>
         </span>
         <div>
-          True Answer : {{ answerList[num] }}
+          True Answer :
+          <span *ngFor="let answer of answerList[num]; index as i">
+            {{ answer }}
+          </span>
+          <span>&nbsp;</span>
         </div>
     </div>
   </div>

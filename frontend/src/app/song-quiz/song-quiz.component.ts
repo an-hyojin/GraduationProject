@@ -28,6 +28,7 @@ export class SongQuizComponent implements OnInit {
   answerList: String[][] = [];
   questionTrans: String[] = [];
   arrayQuizzes: String[][] = [];
+  correctList: String[][] = [];
   songId: String;
   title: string;
   singer: string;
@@ -107,9 +108,11 @@ export class SongQuizComponent implements OnInit {
     let a = 0;
     let b = 0;
     let c = 0;
+    this.solve = true;
     for (let i = 0; i < this.quizzes.length; i++) {
       if (!this.answer[i]) {
         alert('You have to solve Problem' + (i + 1));
+        this.solve = false;
         break;
       }
       if (this.answer[i] != this.quizzes[i].answer) {
@@ -128,8 +131,11 @@ export class SongQuizComponent implements OnInit {
       console.log(this.answer[i]);
       console.log(this.quizzes[i].answer);
     }
+    for(var i=0; i<this.answerList.length; i++){
+      if(JSON.stringify(this.answerList[i])===JSON.stringify(this.arrayQuizzes[i])){
+          this.correctList.push(this.arrayQuizzes[i]);
+      }
+    }
     console.log(a, b, c);
-    this.solve = true;
-    console.log(this.solve);
   }
 }
