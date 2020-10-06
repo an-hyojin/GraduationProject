@@ -11,12 +11,16 @@
 </mat-form-field>
 <button class="btn btn-dark" (click)="search()">Search</button>
 <div id="result-form" >
-    <div class="result-item" *ngFor="let song of resultList; index as i" (click)="goSong(song.id)"
+    <div class="result-item row" *ngFor="let song of resultList; index as i" (click)="goSong(song.id)"
     style="cursor: pointer;">
-        <div>
-            <span class="title">{{song.title}}</span>
-            <span class="singer">{{song.singer}}</span>
+        <div class="col-sm-4">
+            <img class="album" [src]="song.album" [alt]="song.singer"/>
         </div>
+        <div class="col-sm-auto">
+            <span class="title">{{song.title}}</span>
+            <br><br>
+            <span class="singer">{{song.singer}}</span>
+        </div> 
     </div>
 </div>
 
