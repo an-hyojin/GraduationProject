@@ -1,0 +1,19 @@
+.result-item{
+    height: 50px;
+    border: solid 2px rgb(231, 231, 231);
+    margin: 5px;
+    text-align: center;
+    vertical-align: middle;
+    box-shadow: 2px 2px 2px gray;
+    :hover{
+        background-color:  rgb(231, 231, 231);
+    }
+}
+.title{
+    font-size: 15px;
+    margin-right: 10px;
+}
+.singer{
+    font-size: 14px;
+    color: grey;
+}

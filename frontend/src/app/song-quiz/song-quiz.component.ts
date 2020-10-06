@@ -85,7 +85,7 @@ export class SongQuizComponent implements OnInit {
         quiz.example.forEach((v) => answers.push(v));
         answers.sort(() => Math.random() - Math.random());
         this.answer.push('');
-        this.solve = true;
+        //this.solve = true;
         this.examples.push(answers);
       });
     });
