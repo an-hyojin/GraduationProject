@@ -4,6 +4,7 @@ import { Headers, Http, RequestOptions } from '@angular/http';
 import { Observable } from 'rxjs';
 import { Song } from 'src/models/song';
 import { ActivatedRoute, Router } from '@angular/router';
+import request from 'request';
 
 @Component({
   selector: 'app-show-song',
@@ -20,7 +21,7 @@ export class ShowSongComponent implements OnInit {
     private http: Http,
     private route: ActivatedRoute,
     private router: Router
-  ) {}
+  ) { }
   songId: String;
   id: String;
   getSong(): Observable<any> {
@@ -59,9 +60,24 @@ export class ShowSongComponent implements OnInit {
     // morph가 들리게
     console.log(morph, trans, pos);
     this.dict = new DictDiv(morph, trans, pos);
+
+    let kakao_speech_url = 'https://kakaoi-newtone-openapi.kakao.com/v1/synthesize';
+    let rest_api_key = environment.apiKey;
+
+    let headers = new Headers({
+      "Content-Type": "application/xml",
+      "Authorization": "kakaoAK " + rest_api_key, // check필요
+    });
+
+    let options = new RequestOptions({
+      headers: headers,
+    });
+    // request를 이런 형식으로 요청하는게 맞나 체크 
+    return this.http.post(`${kakao_speech_url}`, morph, options);
   }
 }
-class DictDiv {
+
+export class DictDiv implements OnInit {
   morph: string;
   trans: string;
   root: string;
@@ -69,5 +85,10 @@ class DictDiv {
     this.morph = morph;
     this.trans = trans;
     this.root = root;
+  } // morph : 형태소, trans : 번역본, root : 원형
+
+  ngOnInit() {
+
   }
 }
+
