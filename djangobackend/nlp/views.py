@@ -58,25 +58,35 @@ def make_cluster_songs(cluster_num=3):
 
 def init_user_learn_frame():
     user_learn_frame = pd.DataFrame(columns=['userId', 'songId', 'count'])
-    for user in _userdb.find(projection={'_id':True, 'learning':True}):
+    for user in _userdb.find(projection={'_id':True, 'learning':True, 'favorite':True}):
         _id = str(user['_id'])
+        user_learn = {}
         if 'learning' in user:
-            user_learn = {}
             for learn in user['learning']:
                 learn_item = learn['learning']
                 if learn_item not in user_learn:
-                    user_learn[learn_item]= 0
+                    user_learn[learn_item] = 0
                 user_learn[learn_item]+=1
-            data_frame = pd.DataFrame(data=list(user_learn.items()), columns=['songId', 'count'])
-            data_frame['userId'] = _id
-            user_learn_frame = pd.concat([user_learn_frame,data_frame])
+
+        if 'favorite' in user:
+            user_favorite = _songdb.find({'singer':{'$in':user['favorite']}},projection={'_id':True})
+            for favorite_song in user_favorite:
+                favorite_song_id = str(favorite_song['_id'])
+                if favorite_song_id not in user_learn:
+                    user_learn[favorite_song_id] = 0
+
+                user_learn[favorite_song_id]+=1
+        print(user_learn)
+        data_frame = pd.DataFrame(data=list(user_learn.items()), columns=['songId', 'count'])
+        data_frame['userId'] = _id
+        user_learn_frame = pd.concat([user_learn_frame,data_frame])
+
     user_learn_pivot_table = user_learn_frame.pivot_table(values='count', columns='userId', index='songId',aggfunc=sum).fillna(0)
     item_based_collabor = cosine_similarity(user_learn_pivot_table)
     item_based_collabor = pd.DataFrame(data=item_based_collabor, index=user_learn_frame['songId'], columns=user_learn_frame['songId'])
     return item_based_collabor
 
 _kmeansCluster, _model = make_cluster_songs(3)
-_item_based_collabor = init_user_learn_frame()
 
 with open('../../words.csv', 'rt', encoding='UTF8') as data:
     regex = re.compile('[0-9]') # 가다01 가다02 이런식으로 되어있는 것들 제거하기 위함
@@ -100,17 +110,19 @@ with open('../../words.csv', 'rt', encoding='UTF8') as data:
 
 @api_view(['GET','POST'])
 def recommendSongs(request, id):
+    item_based_collabor = init_user_learn_frame()
+
     user = _userdb.find_one({'_id':ObjectId(id) }, projection={'_id':False,'learning':True, 'a':True ,'b':True, 'c':True})
     learn = []
     if 'learning' in user:
         for item in user['learning'][-10:]:
             learn.append(item['learning'])
+            
     learn.reverse()
-    
     learn_item_add = Counter()
     weight = 1
     for songId in learn:
-        now_song_counter = Counter((_item_based_collabor[songId].sort_values(ascending=False)[1:]*weight).to_dict())
+        now_song_counter = Counter((item_based_collabor[songId].sort_values(ascending=False)[1:]*weight).to_dict())
         weight -= 0.1
         learn_item_add = learn_item_add+now_song_counter
     
@@ -127,8 +139,13 @@ def recommendSongs(request, id):
         user_a = user_a/all_count
         user_b = user_b/all_count
         user_c = user_c/all_count
-        user_cluster_num = _model.predict([[user_a, user_b,user_c]])
-        clusterSong = _kmeansCluster[_kmeansCluster['clusterNum']==user_cluster_num[0]]['songId']
+    else:
+        user_a = 0.33
+        user_b = 0.33
+        user_c = 0.34
+
+    user_cluster_num = _model.predict([[user_a, user_b,user_c]])
+    clusterSong = _kmeansCluster[_kmeansCluster['clusterNum']==user_cluster_num[0]]['songId']
     
     if clusterSong is not None:
         for song in clusterSong:
