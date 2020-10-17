@@ -68,6 +68,15 @@ exports.recommend = async (ctx) => {
     ctx.body = error;
   }
 };
+
+exports.singer = async(ctx)=>{
+  try {
+    songs = await Song.find({}, { singer: 1, _id: 1 }).distinct('singer').exec();
+    ctx.body = songs;
+  } catch {
+    return ctx.throw(500, e);
+  }
+};
 /*
 exports.create = async (ctx) => {
   const { title, singer, lyrics } = ctx.request.body;

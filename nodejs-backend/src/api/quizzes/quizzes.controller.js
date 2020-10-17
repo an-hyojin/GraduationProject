@@ -8,7 +8,7 @@ exports.quiz = async (ctx, next) => {
   let song;
 
   try {
-    song = await Song.find(
+    song = await Song.findById(
       { _id: songId },
       {
         singer: 1,
@@ -22,8 +22,9 @@ exports.quiz = async (ctx, next) => {
         count_list: 1,
       }
     ).exec();
-    quizzes = [];
-    song = song[0];
+    allquiz = {};
+    word_quiz = [];
+
     a_quiz_infos = song.a_quiz_info;
     b_quiz_infos = song.b_quiz_info;
     c_quiz_infos = song.c_quiz_info;
@@ -34,7 +35,7 @@ exports.quiz = async (ctx, next) => {
         song
       );
       quiz.level = "A";
-      quizzes.push(quiz);
+      word_quiz.push(quiz);
     }
 
     if (b_quiz_infos.length > 0) {
@@ -43,7 +44,7 @@ exports.quiz = async (ctx, next) => {
         song
       );
       quiz.level = "B";
-      quizzes.push(quiz);
+      word_quiz.push(quiz);
     }
 
     if (c_quiz_infos.length > 0) {
@@ -52,10 +53,30 @@ exports.quiz = async (ctx, next) => {
         song
       );
       quiz.level = "C";
-      quizzes.push(quiz);
+      word_quiz.push(quiz);
     }
+    allquiz.word_quiz = word_quiz;
 
-    ctx.body = quizzes;
+    quiz_index = [];
+    sentence_quiz = [];
+    while (sentence_quiz.length < 2) {
+      let index = Math.floor(Math.random() * song.morphs.length);
+
+      if (quiz_index.includes(index)) continue;
+      quiz_index.push(index);
+      if (song.morphs[index].length <= 2) continue;
+
+      let item = {};
+      item.trans = song.translation[index];
+      item.morphs = song.morphs[index];
+
+      sentence_quiz.push(item);
+    }
+    allquiz.title = song.title;
+    allquiz.singer = song.singer;
+    allquiz.sentence_quiz = sentence_quiz;
+
+    ctx.body = allquiz;
   } catch (e) {
     return ctx.throw(500, e);
   }
@@ -64,8 +85,6 @@ exports.quiz = async (ctx, next) => {
 async function makeQuiz(quiz_info, song) {
   let quiz = {};
   let sentence_index = Number.parseInt(quiz_info.sentence_index);
-  quiz.title = song.title;
-  quiz.singer = song.singer;
   quiz.translation = song.translation[sentence_index];
   quiz.morphs = song.morphs[sentence_index];
   quiz.count_list = song.count_list[sentence_index];

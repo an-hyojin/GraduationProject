@@ -32,7 +32,7 @@ api.get("/temp", async (ctx, next) => {
   let results = await end;
   let body = [];
   ctx.body = "호출";
-  for (i = 14; i < 16; i++) {
+  for (i = 21; i < 23; i++) {
     body.push(results[i]);
   }
   const uri = "http://localhost:8000/nlp/preprocessing/";
