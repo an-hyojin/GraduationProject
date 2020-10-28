@@ -26,11 +26,16 @@ export class SongSearchComponent implements OnInit {
       let res = JSON.parse(v._body);
       res.forEach((element) => {
         this.songList.push(new SongInfo(element));
+       
       });
       this.songList.forEach((element) =>{
         this.searchList.push(element.singer+" - "+element.title);
+       
       });
+      this.resultList.push(...this.songList);
+      console.log(this.songList);
     });
+
     this.filteredOptions = this.songInfo.valueChanges.pipe(
       startWith(''),
       map(value => this._filter(value))    
@@ -52,6 +57,9 @@ export class SongSearchComponent implements OnInit {
         this.resultList.push(element);
       }
     });
+    if(this.resultList.length===0){
+      this.resultList.push(...this.songList);
+    }
 
   }
   goSong(id) {

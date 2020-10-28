@@ -153,7 +153,7 @@ def recommendSongs(request, id):
     if len(recommend_id)<4:
         recommend_id = list(map(lambda objid: str(objid),clusterSong))
     
-    return Response(recommend_id)
+    return Response(recommend_id[:12])
 
 
 @api_view(['GET','POST'])

@@ -22,17 +22,22 @@ var end = new Promise(function (resolve, reject) {
   let results = [];
   fs.createReadStream("../GoodSong.csv")
     .pipe(csv())
-    .on("data", async (data) => await results.push(data))
+    .on("data", async (data) =>
+      results.push(data)
+     )
     .on("end", async () => {
       resolve(results);
     });
+    
 });
+
 
 api.get("/temp", async (ctx, next) => {
   let results = await end;
   let body = [];
   ctx.body = "호출";
-  for (i = 35; i < 40; i++) {
+  for (i = 39; i < 49; i++) {
+    console.log(results[i].Title)
     body.push(results[i]);
   }
   const uri = "http://localhost:8000/nlp/preprocessing/";
