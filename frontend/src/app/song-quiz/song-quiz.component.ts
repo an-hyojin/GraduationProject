@@ -67,20 +67,9 @@ export class SongQuizComponent implements OnInit {
   ngOnInit(): void {
     this.songId = this.route.snapshot.paramMap.get('songId');
     this.id = localStorage.getItem('id');
-    this.getSong().subscribe((v) => {
-      this.song = Song.parseFrom(JSON.parse(v._body));
-      for (var i = 0; i < 2; i++) {
-        var index = Math.floor(Math.random() * 23);
-        this.sentence = this.song.sentences.splice(index, 1);
-        this.questionList = this.sentence[0].split(' ');
-        this.answerList.push(this.sentence[0].split(' '));
-        this.questionList.sort(() => Math.random() - 23);
-        this.questionTrans.push(this.song.translation[index]);
-        console.log(this.song.translation[index]);
-        this.arrayQuizzes.push(this.questionList);
-      }
-    });
     this.getQuiz().subscribe(async (v) => {
+      console.log(JSON.parse(v._body));
+      console.log(v);
       JSON.parse(v._body).forEach((element) => {
         const quiz = new Quiz(element);
         this.quizzes.push(quiz);

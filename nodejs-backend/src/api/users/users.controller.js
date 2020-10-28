@@ -65,6 +65,7 @@ exports.join = async (ctx) => {
     return;
   } // id값 중복 검사
   ctx.request.body.learning = [];
+  
   let account;
   try {
     account = await User.join(ctx.request.body);
