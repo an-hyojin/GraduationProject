@@ -81,7 +81,7 @@ def init_user_learn_frame():
 
     user_learn_pivot_table = user_learn_frame.pivot_table(values='count', columns='userId', index='songId',aggfunc=sum).fillna(0)
     item_based_collabor = cosine_similarity(user_learn_pivot_table)
-    item_based_collabor = pd.DataFrame(data=item_based_collabor, index=user_learn_frame['songId'], columns=user_learn_frame['songId'])
+    item_based_collabor = pd.DataFrame(data=item_based_collabor, index=user_learn.keys(), columns=user_learn.keys())
     return item_based_collabor
 
 _kmeansCluster, _model = make_cluster_songs(3)
@@ -124,7 +124,7 @@ def recommendSongs(request, id):
         weight -= 0.1
         learn_item_add = learn_item_add+now_song_counter
     
-    learn_dict = dict(learn_item_add)
+    learn_dict = dict(learn_item_add.most_common(12))
     user_a = user['a']
     user_b = user['b']
     user_c = user['c']
@@ -145,10 +145,9 @@ def recommendSongs(request, id):
     user_cluster_num = _model.predict([[user_a, user_b,user_c]])
     clusterSong = _kmeansCluster[_kmeansCluster['clusterNum']==user_cluster_num[0]]['songId']
     
-    if clusterSong is not None:
-        for song in clusterSong:
-            if str(song) in learn_dict:
-                recommend_id.append(str(song))
+    for song in clusterSong:
+        if str(song) in learn_dict:
+            recommend_id.append(str(song))
     
     if len(recommend_id)<4:
         recommend_id = list(map(lambda objid: str(objid),clusterSong))
