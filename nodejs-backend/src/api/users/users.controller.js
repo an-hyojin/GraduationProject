@@ -1,6 +1,6 @@
 const Joi = require("joi");
 const User = require("../../models/user");
-
+const Song = require("../../models/song");
 // 로그인
 exports.login = async (ctx) => {
   console.log(ctx.request.body);
@@ -77,19 +77,25 @@ exports.join = async (ctx) => {
 
 exports.info = async (ctx, next) => {
   const { id } = ctx.request.body;
+
   let user = await User.findById({ _id: id }, { password: 0 }).exec();
   console.log(user);
   let learn = [];
   if (!!user.learning && user.learning.length > 0) {
+    let learnSongs = user.learning.map((v) => v.learning);
     let res = await Song.find({}, { singer: 1, title: 1 })
       .where("_id")
-      .in(user.learning)
+      .in(learnSongs)
       .exec();
 
     res.forEach((v) => {
       learn.push(JSON.stringify(v));
     });
   }
-  user.learning = learn;
-  ctx.body = user;
+  let res = {};
+  res._id = user._id;
+  res.id = user.id;
+  res.email = user.email;
+  res.learning = learn;
+  ctx.body = res;
 };

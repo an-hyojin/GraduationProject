@@ -68,13 +68,13 @@
               class="lyrics"
               cdkDropList
               cdkDropListOrientation="horizontal"
-              (cdkDropListDropped)="drop($event, num)"
+              (cdkDropListDropped)="drop($event,num)"
             >
-              <p *ngFor="let morph of quiz; index as i">
-                <span class="kor" *ngIf="morph != ''" cdkDrag>{{ morph }}</span>
+              <p *ngFor="let morph of quiz.morphs; index as i">
+                <span class="kor" cdkDrag>{{ morph }}</span>
               </p>
             </div>
-            <p id="trans">{{ questionTrans[num] }}</p>
+            <p id="trans">{{ quiz.trans }}</p>
           </div>
         </div>
         <div class="d-flex justify-content-center">
@@ -92,6 +92,7 @@
         </div>
       </mat-step>
     </mat-horizontal-stepper>
+    
     <div class="row d-flex align-items-center">
       <button
         (click)="checkAnswer()"
@@ -152,12 +153,12 @@
         <span
           class="display-6 font-weight-bold"
           [ngClass]="{
-           true_answer: correctList.includes(quiz),
-           false_answer: !correctList.includes(quiz)
+           true_answer: correctList.includes(quiz.morphs),
+           false_answer: !correctList.includes(quiz.morphs)
           }"         
           >Q{{  num + quizzes.length + 1 }}.
         </span>
-        <span class="display-6" *ngFor="let morph of quiz; index as i">
+        <span class="display-6" *ngFor="let morph of quiz.morphs; index as i">
           <span *ngIf="morph == answerList[num][i]" class=" font-weight-bold true_answer">{{ morph }}</span>
           <span>&nbsp;</span>
           <span

@@ -1,12 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { Headers, Http, RequestOptions } from '@angular/http';
-import { Observable } from 'rxjs';
+import { from, Observable } from 'rxjs';
 
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Song } from 'src/models/song';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Quiz } from 'src/models/quiz';
+import { WordQuiz } from 'src/models/word-quiz'
+import { SentenceQuiz} from 'src/models/sentence-quiz';
+import { element } from 'protractor';
+
 @Component({
   selector: 'app-song-quiz',
   templateUrl: './song-quiz.component.html',
@@ -23,11 +27,12 @@ export class SongQuizComponent implements OnInit {
   solve: boolean = false;
   userName: String;
   sentence: String[] = [];
-  questionList: String[] = [];
+  sentensQuizMorphs: String[] = [];
+  questionList: String[][] = [];
   id: string;
   answerList: String[][] = [];
   questionTrans: String[] = [];
-  arrayQuizzes: String[][] = [];
+  arrayQuizzes: SentenceQuiz[] = [];
   correctList: String[][] = [];
   songId: String;
   title: string;
@@ -41,7 +46,7 @@ export class SongQuizComponent implements OnInit {
     let options = new RequestOptions({
       headers: headers,
     });
-    return this.http.get(`${this.apiBaseUrl}/api/quiz/` + this.songId, options);
+    return this.http.get(`${this.apiBaseUrl}/api/quizzes/` + this.songId, options);
   }
 
   getSong(): Observable<any> {
@@ -55,7 +60,7 @@ export class SongQuizComponent implements OnInit {
     });
     return this.http.post(`${this.apiBaseUrl}/api/songs`, body, options);
   }
-  quizzes: Quiz[] = [];
+  quizzes: WordQuiz[] = [];
   examples: string[][] = [];
   answer: string[] = [];
   test: String;
@@ -64,31 +69,30 @@ export class SongQuizComponent implements OnInit {
     this.id = localStorage.getItem('id');
     this.getSong().subscribe((v) => {
       this.song = Song.parseFrom(JSON.parse(v._body));
-      for (var i = 0; i < 2; i++) {
-        var index = Math.floor(Math.random() * 23);
-        this.sentence = this.song.sentences.splice(index, 1);
-        this.questionList = this.sentence[0].split(' ');
-        this.answerList.push(this.sentence[0].split(' '));
-        this.questionList.sort(() => Math.random() - 23);
-        this.questionTrans.push(this.song.translation[index]);
-        console.log(this.song.translation[index]);
-        this.arrayQuizzes.push(this.questionList);
-      }
     });
     this.getQuiz().subscribe(async (v) => {
-      JSON.parse(v._body).forEach((element) => {
-        const quiz = new Quiz(element);
-        this.quizzes.push(quiz);
-        this.title = quiz.title;
-        this.singer = quiz.singer;
-        let answers = [];
-        answers.push(quiz.answer);
-        quiz.example.forEach((v) => answers.push(v));
-        answers.sort(() => Math.random() - Math.random());
-        this.answer.push('');
-        //this.solve = true;
-        this.examples.push(answers);
-      });
+      let temp = JSON.parse(v._body);
+      this.singer = temp.singer;
+      this.title = temp.title;
+        const quiz = new Quiz(temp);
+        this.quizzes = quiz.word_quiz;
+        quiz.word_quiz.forEach(element => {
+          let answers = [];
+          answers.push(element.answer);
+          element.example.forEach((v) => answers.push(v));
+          answers.sort(() => Math.random() - Math.random());
+          this.answer.push('');
+          this.examples.push(answers);
+        });
+        this.arrayQuizzes = quiz.sentence_quiz;
+        this.arrayQuizzes.forEach(element => {
+          let sentenceAnswer: String[] = [];
+          this.sentensQuizMorphs = element.morphs;
+          this.sentensQuizMorphs.forEach((v) => sentenceAnswer.push(v));
+          this.answerList.push(sentenceAnswer);
+          this.sentensQuizMorphs.sort(() => Math.random() - Math.random());
+          this.questionList.push(this.sentensQuizMorphs);
+        })
     });
   }
 
@@ -96,13 +100,12 @@ export class SongQuizComponent implements OnInit {
     this.answer[num] = ans;
   }
 
-  drop(event: CdkDragDrop<string[]>, index) {
+  drop(event: CdkDragDrop<string[]>,num) {
     moveItemInArray(
-      this.arrayQuizzes[index],
+      this.questionList[num],
       event.previousIndex,
       event.currentIndex
     );
-    console.log(this.arrayQuizzes[index]);
   }
   checkAnswer(): void {
     let a = 0;
@@ -113,7 +116,7 @@ export class SongQuizComponent implements OnInit {
       if (!this.answer[i]) {
         alert('You have to solve Problem' + (i + 1));
         this.solve = false;
-        break;
+        return;
       }
       if (this.answer[i] != this.quizzes[i].answer) {
         switch (this.quizzes[i].level) {
@@ -127,15 +130,39 @@ export class SongQuizComponent implements OnInit {
             c++;
             break;
         }
-      } 
-      console.log(this.answer[i]);
-      console.log(this.quizzes[i].answer);
-    }
-    for(var i=0; i<this.answerList.length; i++){
-      if(JSON.stringify(this.answerList[i])===JSON.stringify(this.arrayQuizzes[i])){
-          this.correctList.push(this.arrayQuizzes[i]);
       }
     }
     console.log(a, b, c);
+    if (this.solve) {
+      let count = 0;
+      this.correctList = [];
+      for (let i = 0; i < this.answerList.length; i++) {
+        if (
+          JSON.stringify(this.answerList[i]) !==
+          JSON.stringify(this.questionList[i])
+        ) {
+          count++;
+        }else{
+          this.correctList.push(this.questionList[i]);
+        }
+      }
+
+      let body = {
+        songId: this.songId,
+        userId: this.id,
+        a: a,
+        b: b,
+        c: c,
+        count: count,
+      };
+      let headers = new Headers({
+        'Cache-Control': 'no-cache',
+      });
+      let options = new RequestOptions({
+        headers: headers,
+      });
+      this.http.post(`${this.apiBaseUrl}/api/quizzes/`, body, options);
+    }
+    console.log(this.solve);
   }
 }

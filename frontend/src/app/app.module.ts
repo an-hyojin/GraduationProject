@@ -22,6 +22,7 @@ import { HeadComponent } from './head/head.component';
 import { SongQuizComponent } from './song-quiz/song-quiz.component';
 import { HttpModule } from '@angular/http';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import {MatChipsModule} from '@angular/material/chips';
 
 @NgModule({
   declarations: [
@@ -51,6 +52,7 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
     BrowserAnimationsModule,
     MatFormFieldModule,
     MatAutocompleteModule,
+    MatChipsModule
   ],
   providers: [],
   bootstrap: [AppComponent],
