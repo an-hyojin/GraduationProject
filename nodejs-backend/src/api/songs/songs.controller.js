@@ -5,7 +5,7 @@ const { resolve } = require("path");
 exports.list = async (ctx) => {
   let songs;
   try {
-    songs = await Song.find({}, { singer: 1, title: 1, _id: 1 }).exec();
+    songs = await Song.find({}, { singer: 1, title: 1, album:1, _id: 1 }).exec();
   } catch {
     return ctx.throw(500, e);
   }
@@ -77,62 +77,3 @@ exports.singer = async(ctx)=>{
     return ctx.throw(500, e);
   }
 };
-/*
-exports.create = async (ctx) => {
-  const { title, singer, lyrics } = ctx.request.body;
-
-  const song = new Song({
-    title,
-    singer,
-    lyrics,
-  });
-
-  try {
-    await song.save();
-  } catch (e) {
-    return ctx.throw(500, e);
-  }
-
-  ctx.body = song;
-};
-
-exports.delete = async (ctx) => {
-  const { id } = ctx.params;
-
-  try {
-    await Book.findByIdAndRemove(id).exec();
-  } catch (e) {
-    if (e.name === "CastError") {
-      ctx.status = 400;
-      return;
-    }
-  }
-
-  ctx.status = 204;
-};
-
-exports.replace = (ctx) => {
-  ctx.body = "replaced";
-};
-
-exports.update = async (ctx) => {
-  const { id } = ctx.params;
-
-  if (!ObjectId.isValid(id)) {
-    ctx.status = 400;
-    return;
-  }
-
-  let song;
-
-  try {
-    song = await Song.findByIdAndUpdate(id, ctx.request.body, {
-      new: true,
-    });
-  } catch (e) {
-    return ctx.throw(500, e);
-  }
-
-  ctx.body = song;
-};
-*/

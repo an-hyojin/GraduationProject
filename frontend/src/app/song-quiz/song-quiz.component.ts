@@ -1,12 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { Headers, Http, RequestOptions } from '@angular/http';
-import { Observable } from 'rxjs';
+import { from, Observable } from 'rxjs';
 
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Song } from 'src/models/song';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Quiz } from 'src/models/quiz';
+import { WordQuiz } from 'src/models/word-quiz'
+import { SentenceQuiz} from 'src/models/sentence-quiz';
+import { element } from 'protractor';
+
 @Component({
   selector: 'app-song-quiz',
   templateUrl: './song-quiz.component.html',
@@ -14,8 +18,7 @@ import { Quiz } from 'src/models/quiz';
 })
 export class SongQuizComponent implements OnInit {
   private apiBaseUrl = environment.apiBaseUrl;
-  song: Song;
-
+ 
   constructor(
     private http: Http,
     private route: ActivatedRoute,
@@ -24,13 +27,15 @@ export class SongQuizComponent implements OnInit {
   solve: boolean = false;
   userName: String;
   sentence: String[] = [];
-  questionList: String[] = [];
+  sentensQuizMorphs: String[] = [];
+  questionList: String[][] = [];
   id: string;
 
   questionTrans: String[] = [];
-  arrayQuizzes: String[][] = [];
   answerList: String[][] = [];
 
+  arrayQuizzes: SentenceQuiz[] = [];
+  correctList: String[][] = [];
   songId: String;
   title: string;
   singer: string;
@@ -43,10 +48,7 @@ export class SongQuizComponent implements OnInit {
     let options = new RequestOptions({
       headers: headers,
     });
-    return this.http.get(
-      `${this.apiBaseUrl}/api/quizzes/` + this.songId,
-      options
-    );
+    return this.http.get(`${this.apiBaseUrl}/api/quizzes/` + this.songId, options);
   }
 
   getSong(): Observable<any> {
@@ -60,29 +62,37 @@ export class SongQuizComponent implements OnInit {
     });
     return this.http.post(`${this.apiBaseUrl}/api/songs`, body, options);
   }
-  quizzes: Quiz[] = [];
+  quizzes: WordQuiz[] = [];
   examples: string[][] = [];
   answer: string[] = [];
   test: String;
   ngOnInit(): void {
     this.songId = this.route.snapshot.paramMap.get('songId');
     this.id = localStorage.getItem('id');
+    
     this.getQuiz().subscribe(async (v) => {
-      console.log(JSON.parse(v._body));
-      console.log(v);
-      JSON.parse(v._body).forEach((element) => {
-        const quiz = new Quiz(element);
-        this.quizzes.push(quiz);
-        this.title = quiz.title;
-        this.singer = quiz.singer;
-        let answers = [];
-        answers.push(quiz.answer);
-        quiz.example.forEach((v) => answers.push(v));
-        answers.sort(() => Math.random() - Math.random());
-        this.answer.push('');
-        this.solve = true;
-        this.examples.push(answers);
-      });
+      let temp = JSON.parse(v._body);
+      this.singer = temp.singer;
+      this.title = temp.title;
+        const quiz = new Quiz(temp);
+        this.quizzes = quiz.word_quiz;
+        quiz.word_quiz.forEach(element => {
+          let answers = [];
+          answers.push(element.answer);
+          element.example.forEach((v) => answers.push(v));
+          answers.sort(() => Math.random() - Math.random());
+          this.answer.push('');
+          this.examples.push(answers);
+        });
+        this.arrayQuizzes = quiz.sentence_quiz;
+        this.arrayQuizzes.forEach(element => {
+          let sentenceAnswer: String[] = [];
+          this.sentensQuizMorphs = element.morphs;
+          this.sentensQuizMorphs.forEach((v) => sentenceAnswer.push(v));
+          this.answerList.push(sentenceAnswer);
+          this.sentensQuizMorphs.sort(() => Math.random() - Math.random());
+          this.questionList.push(this.sentensQuizMorphs);
+        })
     });
   }
 
@@ -90,21 +100,22 @@ export class SongQuizComponent implements OnInit {
     this.answer[num] = ans;
   }
 
-  drop(event: CdkDragDrop<string[]>, index) {
+  drop(event: CdkDragDrop<string[]>,num) {
     moveItemInArray(
-      this.arrayQuizzes[index],
+      this.questionList[num],
       event.previousIndex,
       event.currentIndex
     );
-    console.log(this.arrayQuizzes[index]);
   }
   checkAnswer(): void {
     let a = 0;
     let b = 0;
     let c = 0;
+    this.solve = true;
     for (let i = 0; i < this.quizzes.length; i++) {
       if (!this.answer[i]) {
         alert('You have to solve Problem' + (i + 1));
+        this.solve = false;
         return;
       }
       if (this.answer[i] != this.quizzes[i].answer) {
@@ -122,15 +133,17 @@ export class SongQuizComponent implements OnInit {
       }
     }
     console.log(a, b, c);
-    if (!this.solve) {
-      this.solve = true;
+    if (this.solve) {
       let count = 0;
+      this.correctList = [];
       for (let i = 0; i < this.answerList.length; i++) {
         if (
           JSON.stringify(this.answerList[i]) !==
-          JSON.stringify(this.arrayQuizzes[i])
+          JSON.stringify(this.questionList[i])
         ) {
           count++;
+        }else{
+          this.correctList.push(this.questionList[i]);
         }
       }
 

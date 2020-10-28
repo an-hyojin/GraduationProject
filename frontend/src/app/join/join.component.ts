@@ -1,14 +1,20 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import {
   FormControl,
   FormBuilder,
   FormGroup,
   Validators,
+  AbstractControl,
 } from '@angular/forms';
 import { Http } from '@angular/http';
 import { environment } from 'src/environments/environment';
 import { stringify } from 'querystring';
 import { Router } from '@angular/router';
+import { Observable } from 'rxjs';
+import {MatAutocompleteSelectedEvent, MatAutocomplete} from '@angular/material/autocomplete';
+import {MatChipInputEvent} from '@angular/material/chips';
+import { SongInfo } from 'src/models/song-info';
+import { map, startWith } from 'rxjs/operators';
 
 @Component({
   selector: 'app-join',
@@ -25,6 +31,9 @@ export class JoinComponent implements OnInit {
     Validators.required,
     Validators.minLength(6),
   ]);
+  
+  resultList = [];
+  singerCtrl = new FormControl();
   constructor(
     private fb: FormBuilder,
     private http: Http,
@@ -34,9 +43,25 @@ export class JoinComponent implements OnInit {
       id: this.id,
       password: this.password,
       email: this.email,
+      singer: this.singerCtrl
     });
   }
+  filteredSingers: Observable<string[]>;
+  visible = true;
+  selectable = true;
+  removable = true;
+  songInfo = new FormControl();
+  singers = [];
+  searchList = [];
+  
+  @ViewChild('singerInput') singerInput: ElementRef<HTMLInputElement>;
+  @ViewChild('auto') matAutocomplete: MatAutocomplete;
+  @ViewChild('chipList') chipList;
+
   onSubmit() {
+    if(this.resultList.length==0){
+      this.chipList.errorState = true;
+    }
     console.log(this.joinForm);
     if (this.joinForm.valid) {
       let formData = new FormData();
@@ -60,6 +85,25 @@ export class JoinComponent implements OnInit {
     if (!!localStorage.getItem('auth')) {
       this.router.navigate(['/main']);
     }
+    this.getSong().subscribe((v) => {
+      let res = JSON.parse(v._body);
+      res.forEach((element) => {
+        this.singers.push(new SongInfo(element));
+      });
+      this.singers.forEach((element) =>{
+        if(!this.searchList.includes(element.singer)){
+          this.searchList.push(element.singer);
+        }
+      });
+      console.log(this.searchList);
+      this.filteredSingers = this.singerCtrl.valueChanges.pipe(
+        startWith(''),
+        map(value => this._filter(value))
+      );
+    });
+  }
+  getSong(): Observable<any> {
+    return this.http.get(`${this.apiBaseUrl}/api/songs`);
   }
   getEmailErrorMessage() {
     if (this.email.hasError('required')) {
@@ -86,4 +130,44 @@ export class JoinComponent implements OnInit {
       ? 'Please enter at least 6 characters.'
       : '';
   }
+  getSingerErrorMessage() {
+    if (this.singerCtrl.hasError('required')) {
+      return 'You must select at one value';
+    }
+  }
+
+  remove(singer: string): void {
+    const index = this.resultList.indexOf(singer);
+
+    if (index >= 0) {
+      this.resultList.splice(index, 1);
+    }
+    if(this.resultList.length==0){
+      this.chipList.errorState = true;
+    }else{
+      this.chipList.errorState = false;
+    }
+    this.filteredSingers = this.singerCtrl.valueChanges.pipe(
+      startWith(''),
+      map(value => this._filter(value))
+    );
+  }
+
+  selected(event: MatAutocompleteSelectedEvent): void {
+   if(!this.resultList.includes(event.option.viewValue)){
+     if(this.resultList.length>4){
+       this.chipList.errorState = true;
+     }else{
+      this.resultList.push(event.option.viewValue);
+      this.singerCtrl.setValue(this.resultList);
+      this.chipList.errorState = false;
+     }
+   }
+  }
+
+  private _filter(value: string): string[] {
+    console.log(value);
+    return this.searchList.filter(option => option.includes(value));
+  }
+ 
 }

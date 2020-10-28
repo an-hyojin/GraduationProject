@@ -24,6 +24,8 @@ import { HttpModule } from '@angular/http';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { RecommendComponent } from './recommend/recommend.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import {MatChipsModule} from '@angular/material/chips';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -54,6 +56,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     MatFormFieldModule,
     MatProgressSpinnerModule,
     MatAutocompleteModule,
+    MatChipsModule
   ],
   providers: [],
   bootstrap: [AppComponent],

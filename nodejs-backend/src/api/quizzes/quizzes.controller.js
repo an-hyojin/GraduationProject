@@ -24,7 +24,7 @@ exports.quiz = async (ctx, next) => {
     ).exec();
     allquiz = {};
     word_quiz = [];
-
+    
     a_quiz_infos = song.a_quiz_info;
     b_quiz_infos = song.b_quiz_info;
     c_quiz_infos = song.c_quiz_info;
@@ -85,6 +85,8 @@ exports.quiz = async (ctx, next) => {
 async function makeQuiz(quiz_info, song) {
   let quiz = {};
   let sentence_index = Number.parseInt(quiz_info.sentence_index);
+  quiz.title = song.title;
+  quiz.singer = song.singer;
   quiz.translation = song.translation[sentence_index];
   quiz.morphs = song.morphs[sentence_index];
   quiz.count_list = song.count_list[sentence_index];
