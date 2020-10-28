@@ -1,22 +1,15 @@
+import { SentenceQuiz } from './sentence-quiz';
+import { WordQuiz } from './word-quiz';
+
 export class Quiz {
-  answer: string;
-  count_list: [Number];
-  example: [string];
-  level: string;
-  morphs: [string];
-  morph_index: Number;
-  title: string;
-  singer: string;
-  translation: string;
+  sentence_quiz:SentenceQuiz[] =[]
+  word_quiz:WordQuiz[] = [];
   constructor(json: any) {
-    this.answer = json.answer;
-    this.count_list = json.count_list;
-    this.example = json.example;
-    this.level = json.level;
-    this.title = json.title;
-    this.singer = json.singer;
-    this.morphs = json.morphs;
-    this.morph_index = json.morph_index;
-    this.translation = json.translation;
+    json.sentence_quiz.forEach(element => {
+      this.sentence_quiz.push(new SentenceQuiz(element));
+    });
+    json.word_quiz.forEach(element => {
+      this.word_quiz.push(new WordQuiz(element));
+    });
   }
 }

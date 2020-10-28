@@ -21,6 +21,11 @@ import { JoinComponent } from './join/join.component';
 import { HeadComponent } from './head/head.component';
 import { SongQuizComponent } from './song-quiz/song-quiz.component';
 import { HttpModule } from '@angular/http';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { RecommendComponent } from './recommend/recommend.component';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import {MatChipsModule} from '@angular/material/chips';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -33,6 +38,7 @@ import { HttpModule } from '@angular/http';
     JoinComponent,
     HeadComponent,
     SongQuizComponent,
+    RecommendComponent,
   ],
   imports: [
     BrowserModule,
@@ -48,6 +54,9 @@ import { HttpModule } from '@angular/http';
     DragDropModule,
     BrowserAnimationsModule,
     MatFormFieldModule,
+    MatProgressSpinnerModule,
+    MatAutocompleteModule,
+    MatChipsModule
   ],
   providers: [],
   bootstrap: [AppComponent],

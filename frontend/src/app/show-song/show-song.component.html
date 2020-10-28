@@ -1,6 +1,6 @@
 <app-head [id]="id"></app-head>
 <div>
-  <div *ngIf="!!song" class="container">
+  <div *ngIf="!!song; else spinner" class="container">
     <div class="text-center m-3">
       <h1 id="song-title">{{ song.title }}</h1>
       <h3 id="song-singer">{{ song.singer }}</h3>
@@ -107,4 +107,10 @@
     <h4>means</h4>
     <span>: {{ dict.trans }}</span>
   </div>
+
+  <ng-template #spinner>
+    <div class="d-flex justify-content-center">
+      <mat-spinner></mat-spinner>
+    </div>
+  </ng-template>
 </div>

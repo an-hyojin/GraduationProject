@@ -6,7 +6,7 @@
       ><small class="text-muted">{{ singer }}</small>
     </h1>
   </div>
-  <div *ngIf="quizzes.length != 0; else load">
+  <div *ngIf="quizzes.length != 0; else spinner">
     <mat-horizontal-stepper linear #stepper>
       <mat-step *ngFor="let quiz of quizzes; index as num">
         <ng-template matStepLabel>Problem {{ num + 1 }}</ng-template>
@@ -53,7 +53,7 @@
       </mat-step>
 
       <mat-step *ngFor="let quiz of arrayQuizzes; index as num">
-        <div *ngIf="!!song">
+        <div>
           <ng-template matStepLabel
             >Problem {{ num + quizzes.length + 1 }}</ng-template
           >
@@ -68,13 +68,13 @@
               class="lyrics"
               cdkDropList
               cdkDropListOrientation="horizontal"
-              (cdkDropListDropped)="drop($event, num)"
+              (cdkDropListDropped)="drop($event,num)"
             >
-              <p *ngFor="let morph of quiz; index as i">
-                <span class="kor" *ngIf="morph != ''" cdkDrag>{{ morph }}</span>
+              <p *ngFor="let morph of quiz.morphs; index as i">
+                <span class="kor" cdkDrag>{{ morph }}</span>
               </p>
             </div>
-            <p id="trans">{{ questionTrans[num] }}</p>
+            <p id="trans">{{ quiz.trans }}</p>
           </div>
         </div>
         <div class="d-flex justify-content-center">
@@ -92,6 +92,7 @@
         </div>
       </mat-step>
     </mat-horizontal-stepper>
+    
     <div class="row d-flex align-items-center">
       <button
         (click)="checkAnswer()"
@@ -104,8 +105,10 @@
     </div>
   </div>
 
-  <ng-template #load>
-    <h1>Loading...</h1>
+  <ng-template #spinner>
+    <div class="d-flex justify-content-center">
+      <mat-spinner></mat-spinner>
+    </div>
   </ng-template>
 </div>
 <div
@@ -113,7 +116,7 @@
   role="dialog"
   class="modal fade"
   role="dialog"
-  aria-hidden="!solve"
+  *ngIf="solve"
 >
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content p-5">
@@ -147,9 +150,36 @@
           Your Answer : {{ answer[num] }}<br />
           True Answer : {{ quiz.answer }}
         </div>
-
-        <br />
       </div>
+      <div *ngFor="let quiz of arrayQuizzes; index as num">
+        <span
+          class="display-6 font-weight-bold"
+          [ngClass]="{
+           true_answer: correctList.includes(quiz.morphs),
+           false_answer: !correctList.includes(quiz.morphs)
+          }"         
+          >Q{{  num + quizzes.length + 1 }}.
+        </span>
+        <span class="display-6" *ngFor="let morph of quiz.morphs; index as i">
+          <span *ngIf="morph == answerList[num][i]" class=" font-weight-bold true_answer">{{ morph }}</span>
+          <span>&nbsp;</span>
+          <span
+          *ngIf="morph != answerList[num][i]"
+              class="font-weight-bold false_answer"
+              >{{ morph }}</span
+            >
+            <span>&nbsp;</span>
+        </span>
+        <div>
+          True Answer :
+          <span *ngFor="let answer of answerList[num]; index as i">
+            {{ answer }}
+          </span>
+          <span>&nbsp;</span>
+        </div>
+    </div>
+    <div class="row d-flex align-items-center">
+      <button class="btn btn-primary" data-dismiss="modal" routerLink="/recommend">End Learning</button>
     </div>
   </div>
 </div>

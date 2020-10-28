@@ -1,10 +1,39 @@
-<div class="align-middle">
+<div class="align-middle h-100">
+    <div class="row">
+        <div class="col-md-8">
+            <mat-form-field class="formfield w-100" appearance="standard">
+                <mat-label>Title or Singer</mat-label>
+                <input [formControl]="songInfo" matInput placeholder="Placeholder" id="search-form" [matAutocomplete]="auto">
+                <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
+                    <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+                        {{option}}
+                    </mat-option>
+                </mat-autocomplete>
+            </mat-form-field>
+            
+        </div>
+        <div class="col-md-4">
+            <div class="row align-items-center h-100">
+            <button class="btn w-100 btn-dark" (click)="search()">Search</button>
+            </div>
+        </div>
+    </div>
+    <div class="h-100 overflow-auto">
+        <div style="height:100px" >
+            <div class="result-item row" *ngFor="let song of resultList; index as i" (click)="goSong(song.id)"
+            style="cursor: pointer;">
+                <div class="col-sm-4">
+                    <img class="album" [src]="song.album" [alt]="song.singer"/>
+                </div>
+                <div class="col-sm-auto">
+                    <span class="title">{{song.title}}</span>
+                    <br><br>
+                    <span class="singer">{{song.singer}}</span>
+                </div> 
+            </div>
+         </div>
+       
+    </div>
+
     
-<mat-form-field class="formfield" appearance="fill">
-    <mat-label>Title or Singer</mat-label>
-    <input [formControl]="songInfo" matInput placeholder="Placeholder">
-</mat-form-field>
-<button class="btn btn-dark">Search</button>
-
-
-</div>
+    </div>

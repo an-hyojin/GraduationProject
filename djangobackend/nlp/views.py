@@ -5,6 +5,12 @@ from .serializers import SongSerializer, WordSerializer
 from konlpy.tag import Okt
 from konlpy.tag import Kkma
 from selenium import webdriver
+from pymongo import MongoClient
+from sklearn.cluster import KMeans
+from bson.objectid import ObjectId
+from sklearn.metrics.pairwise import cosine_similarity
+from collections import Counter
+
 
 import re
 import time
@@ -15,16 +21,72 @@ import os
 import sys
 import urllib.request
 import csv
+import pymongo
+import dns
+import ssl
+import pandas as pd
+
 _client_id = "au7Pqz4nAV0GdI9eHWVg" # 개발자센터에서 발급받은 Client ID 값
 _client_secret = "FTTueiV1Gy" # 개발자센터에서 발급받은 Client Secret 값
 
-_json_res = [{"singer":"싹쓰리(유두래곤, 린다G, 비룡)","title":"다시 여기 바닷가","album":"https://musicmeta-phinf.pstatic.net/album/004/673/4673490.jpg?type=r360Fll&v=20200718175908","lyrics":"예아! 호우! 예예예~\n싹쓰리 인더 하우스\n커커커커커몬! 싹!쓰리!투 렛츠고!\n\n나 다시 또 설레어\n이렇게 너를 만나서\n함께 하고 있는 지금 이 공기가\n\n다시는 널 볼 순 없을 거라고\n추억일 뿐이라\n서랍 속에 꼭 넣어뒀는데\n\n흐르는 시간 속에서\n너와 내 기억은\n점점 희미해져만 가\n끝난 줄 알았어\n\n지난여름 바닷가\n너와 나 단둘이\n파도에 취해서 노래하며\n같은 꿈을 꾸었지\n다시 여기 바닷가\n이제는 말하고 싶어\n네가 있었기에 내가 더욱 빛나\n별이 되었다고\n\n다들 덥다고 막 짜증내\n괜찮아 우리 둘은 따뜻해\n내게 퐁당 빠져버린 널 \n이젠 구하러 가지 않을 거야\n모래 위 펴펴펴편지를 써\n밀물이 밀려와도 못 지워\n추억이 될 뻔한 첫 느낌\n너랑 다시 한번 받아 보고 싶어\n\n흐르는 시간 속에서\n너와 내 기억은\n점점 희미해져만 가\n끝난 줄 알았어\n\n지난여름 바닷가\n너와 나 단둘이\n파도에 취해서 노래하며\n같은 꿈을 꾸었지\n다시 여기 바닷가\n이제는 말하고 싶어\n네가 있었기에 내가 더욱 빛나\n별이 되었다고\n\n시간의 강을 건너\n또 맞닿은 너와 나\n소중한 사랑을 영원히\n간직해줘\n\n지난여름 바닷가\n너와 나 단둘이\n파도에 취해서 노래하며\n같은 꿈을 꾸었지\n다시 여기 바닷가\n이제는 말하고 싶어\n네가 있었기에 내가 더욱 빛나\n별이 되었다고","nlp_lyrics":["예","아","!","호우","!","예","예","예","~","싹","쓰리","인","더","하우스","커","커","커","커","커","몬","!","싹","!","쓰리","!","투","렛츠고","!","나","다시","또","설레어","이렇게","너","를","만나서","함께","하고","있는","지금","이","공기","가","다시는","널","볼","순","없을","거","라고","추억","일","뿐","이라","서랍","속","에","꼭","넣어","뒀는데","흐르는","시간","속","에서","너","와","내","기억","은","점점","희미","해져만","가","끝난","줄","알았어","지난","여름","바닷가","너","와","나","단둘","이","파도","에","취해","서","노래","하며","같은","꿈","을","꾸었지","다시","여기","바닷가","이제","는","말","하고","싶어","네","가","있었기에","내","가","더욱","빛","나","별","이","되었다고","다","들","덥다고","막","짜증","내","괜찮아","우리","둘","은","따뜻해","내게","퐁당","빠져","버린","널","이","젠","구","하러","가지","않을","거야","모래","위","펴","펴","펴","편지","를","써","밀물","이","밀려와도","못","지워","추억","이","될","뻔한","첫","느낌","너","랑","다시","한번","받아","보고","싶어","흐르는","시간","속","에서","너","와","내","기억","은","점점","희미","해져만","가","끝난","줄","알았어","지난","여름","바닷가","너","와","나","단둘","이","파도","에","취해","서","노래","하며","같은","꿈","을","꾸었지","다시","여기","바닷가","이제","는","말","하고","싶어","네","가","있었기에","내","가","더욱","빛","나","별","이","되었다고","시간","의","강","을","건너","또","맞닿은","너","와","나","소중한","사랑","을","영원히","간직","해","줘","지난","여름","바닷가","너","와","나","단둘","이","파도","에","취해","서","노래","하며","같은","꿈","을","꾸었지","다시","여기","바닷가","이제","는","말","하고","싶어","네","가","있었기에","내","가","더욱","빛","나","별","이","되었다고"],"trans":["Yes, ah! Whoo!","Yes, yes! Three in the house! Big! Big! Big! Mon! Three! Two, let's go! I was so excited to meet you again, and now that I'm with you again, I'm just remembering that this air will never see you again, so I kept it in my drawer, and I thought your memories of me and you were fading away.","Last summer, you and I got drunk on the waves and we sang the same dream, and now I want to talk about the beach here again, because you were there, I became a shining star.","They're all hot.","I'm just annoyed. It's okay. We're warm. I'm not going to save you from drowning. Spread it out on the sand. I'm going to write you a letter. The first impression I'm going to be a memory when the tide comes in. I want to take it with you again. I thought your memories of me and you were fading away.","Last summer, you and I got drunk on the waves and we sang the same dream, and now I want to talk about the beach here again, because you were there, I became a shining star.","Last summer, you and I got drunk on the waves and sang the same dream again, and now I want to talk about it, so I'm a shining star."],"origin":["예 아! 호우!","예예 예~ 싹 쓰리 인 더 하우스 커 커 커 커 커 몬! 싹! 쓰리! 투 렛츠고! 나 다시 또 설레어 이렇게 너를 만나서 함께 하고 있는 지금 이 공기가 다시는 널 볼 순 없을 거라고 추억일 뿐이라 서랍 속에 꼭 넣어 뒀는데 흐르는 시간 속에서 너와 내 기억은 점점 희미 해져만 가 끝난 줄 알았어","지난 여름 바닷가 너와 나 단둘이 파도에 취해서 노래하며 같은 꿈을 꾸었지 다시 여기 바닷가 이제는 말하고 싶어 네 가 있었기에 내가 더욱 빛 나 별이 되었다고","다들 덥다고","막 짜증 내 괜찮아 우리 둘은 따뜻해 내게 퐁당 빠져 버린 널 이젠 구하러 가지 않을 거야 모래 위 펴 펴 펴 편지를 써 밀물이 밀려와도 못 지워 추억이 될 뻔한 첫 느낌 너랑 다시 한번 받아 보고 싶어 흐르는 시간 속에서 너와 내 기억은 점점 희미 해져만 가 끝난 줄 알았어","지난 여름 바닷가 너와 나 단둘이 파도에 취해서 노래하며 같은 꿈을 꾸었지 다시 여기 바닷가 이제는 말하고 싶어 네 가 있었기에 내가 더욱 빛 나 별이 되었다고","시간의 강을 건너 또 맞닿은 너와 나 소중한 사랑을 영원히 간직해 줘 지난 여름 바닷가 너와 나 단둘이 파도에 취해서 노래하며 같은 꿈을 꾸었지 다시 여기 바닷가 이제는 말하고 싶어 네 가 있었기에 내가 더욱 빛 나 별이 되었다고"]},{"singer":"싹쓰리(유두래곤, 린다G, 비룡)","title":"그 여름을 틀어줘","album":"https://musicmeta-phinf.pstatic.net/album/004/707/4707332.jpg?type=r360Fll&v=20200730114808","lyrics":"이 여름 다시 한번 설레고 싶다\n그때 그 여름을 틀어줘 그 여름을 들려줘\n그때 그 여름을 틀어줘 다시 한번 또 불러줘\n\n1, 2, SSAK 3\nOkay okay okay Alright alright alright 저 바다가 부를 때\nGo back Go back Go back 그해 여름으로 손잡고 뛰어들래? (Ooh~)\n    \nUh uh uh I’m UD-UD, MY NEW I.D 그 시절 날 웃고 울리던 멜로디\n하늘은 우릴 향해 열려있어 uh 그리고 내 곁에는 네가 있어 uh\nRE–PLAY 이 계절을 멈추지 마요 밤새도록 Play 해줘\n\n그때 그 여름을 틀어줘 그 여름을 들려줘 (내가 많이 설렜었던, 참 많이 뜨거웠던)\n그때 그 여름을 틀어줘 다시 한번 또 불러줘\n\n올라타 라타 라타 파도 타고 We flow 흘러 흘러 닿을 수 있을까?\n왠지 왠지 왠지 올해 여름 바람 널 떠올려 그날의 ooh~\nI love it, like it, yeah I like it!\n \n돈이 없었지 깡이 없었나 아 예예예예예\n일이 없었지 감이 없었나 아 예예예예예\nYouth- Flex- 이 계절을 아끼지 마요 밤새도록 Play 해줘\n\n그때 그 여름을 틀어줘 그 여름을 들려줘 (내가 많이 설렜었던, 참 많이 뜨거웠던)\n그때 그 여름을 틀어줘 다시 한번 또 불러줘\n\n이 여름도 언젠가는 그해 여름 오늘이 가장 젊은 내 여름\n이 계절에 머무르고 싶어 언제까지 영원히 으음 음\n\n1, 2, 3!\n그때 그 여름을 틀어줘 그 여름을 들려줘 (내가 많이 사랑했던, 참 많이 설렜었던)\n그때 그 여름을 틀어줘 다시 한번 또 불러줘","nlp_lyrics":["이","여름","다시","한번","설레고","싶다","그때","그","여름","을","틀어","줘","그","여름","을","들려줘","그때","그","여름","을","틀어","줘","다시","한번","또","불러","줘","1",",","2",",","SSAK","3","Okay","okay","okay","Alright","alright","alright","저","바다","가","부를","때","Go","back","Go","back","Go","back","그해","여름","으로","손잡고","뛰어들래","?","(","Ooh","~)","Uh","uh","uh","I","’","m","UD","-","UD",",","MY","NEW","I",".","D","그","시절","날","웃고","울리던","멜로디","하늘","은","우릴","향","해","열려","있어","uh","그리고","내","곁","에는","네","가","있어","uh","RE","–","PLAY","이","계절","을","멈추지","마","요","밤새도록","Play","해","줘","그때","그","여름","을","틀어","줘","그","여름","을","들려줘","(","내","가","많이","설렜었던",",","참","많이","뜨거웠던",")","그때","그","여름","을","틀어","줘","다시","한번","또","불러","줘","올라","타","라","타","라","타","파도","타고","We","flow","흘러","흘러","닿을","수","있을까","?","왠지","왠지","왠지","올해","여름","바람","널","떠올려","그날","의","ooh","~","I","love","it",",","like","it",",","yeah","I","like","it","!","돈","이","없었지","깡","이","없었나","아","예","예","예","예","예","일이","없었지","감","이","없었나","아","예","예","예","예","예","Youth","-","Flex","-","이","계절","을","아끼지","마","요","밤새도록","Play","해","줘","그때","그","여름","을","틀어","줘","그","여름","을","들려줘","(","내","가","많이","설렜었던",",","참","많이","뜨거웠던",")","그때","그","여름","을","틀어","줘","다시","한번","또","불러","줘","이","여름","도","언젠가","는","그해","여름","오늘이","가장","젊은","내","여름","이","계절","에","머무르고","싶어","언제","까지","영원히","으","음","음","1",",","2",",","3","!","그때","그","여름","을","틀어","줘","그","여름","을","들려줘","(","내","가","많이","사랑","했던",",","참","많이","설렜었던",")","그때","그","여름","을","틀어","줘","다시","한번","또","불러","줘"],"trans":["I want to be excited again this summer.","Play that summer. Play that summer. Play that summer. Sing that summer again. 1, 2, SSAK 3 Okay okay right right early. When that sea sings, go back Go back Go back that summer?","(Ooh~) Uh uh uh I'm UD-UD, MY NEW I.D. The sky of the melody that was smiling and ringing in those days is open to us uh and there's you next to me, uh RE–PLAY. Play the summer all night. Play it for me. Let me hear the summer when I was very hot.","Somehow this summer wind reminds me of you ooh~ I love it, like it, yeah I like it!","Yeah, yeah, yeah, yeah, yeah. I didn't have a clue.","Yes, yes, yes, yes, yes, yes, yes, yes. Play it all night. Play it for me. Play it for me. Play it again. Sing it again for me. Sing it again. This summer will be the youngest summer of that year. One day, I want to stay in this season. One, two, three! Play the summer that I loved."],"origin":["이 여름 다시 한번 설레고 싶다","그때 그 여름을 틀어 줘 그 여름을 들려줘 그때 그 여름을 틀어 줘 다시 한번 또 불러 줘 1, 2, SSAK 3 Okay okay okay Alright alright alright 저 바다가 부를 때 Go back Go back Go back 그해 여름으로 손잡고 뛰어들래?","(Ooh~) Uh uh uh I’m UD-UD, MY NEW I.D 그 시절 날 웃고 울리던 멜로디 하늘은 우릴 향해 열려 있어 uh 그리고 내 곁에는 네 가 있어 uh RE–PLAY 이 계절을 멈추지 마요 밤새도록 Play 해 줘 그때 그 여름을 틀어 줘 그 여름을 들려줘 ( 내가 많이 설렜었던, 참 많이 뜨거웠던) 그때 그 여름을 틀어 줘 다시 한번 또 불러 줘 올라 타 라 타 라 타 파도 타고 We flow 흘러 흘러 닿을 수 있을까?","왠지 왠지 왠지 올해 여름 바람 널 떠올려 그날의 ooh~ I love it, like it, yeah I like it! 돈이 없었지 깡이 없었나","아 예예 예예 예 일이 없었지 감이 없었나","아 예 예예 예예 Youth- Flex- 이 계절을 아끼지 마요 밤새도록 Play 해 줘 그때 그 여름을 틀어 줘 그 여름을 들려줘 ( 내가 많이 설렜었던, 참 많이 뜨거웠던) 그때 그 여름을 틀어 줘 다시 한번 또 불러 줘 이 여름도 언젠가는 그해 여름 오늘이 가장 젊은 내 여름 이 계절에 머무르고 싶어 언제까지 영원히 으 음 음 1, 2, 3! 그때 그 여름을 틀어 줘 그 여름을 들려줘 ( 내가 많이 사랑했던, 참 많이 설렜었던) 그때 그 여름을 틀어 줘 다시 한번 또 불러 줘"]}]
 _dic = {}
 _temp_dic = {}
 _word_dic = {}
+_client = MongoClient('mongodb+srv://hyojin:graducnu2020@graducnu2020.7au9v.mongodb.net/song?retryWrites=true&w=majority', ssl=True, ssl_cert_reqs=ssl.CERT_NONE)
+
+_db = _client.song
+_songdb = _db.songs
+_userdb = _db.users
+
+def make_cluster_songs(cluster_num=3):
+    abc = []
+    title = []
+    for song in _songdb.find(projection={'_id': True, 'a_count':True, 'b_count':True,'c_count':True}):
+        title.append(song['_id'])
+        a = song['a_count']
+        b = song['b_count']
+        c = song['c_count']
+        count = a+b+c
+        abc.append([a/count, b/count,c/count])    
+    abcDf = pd.DataFrame(data=abc, index=title, columns=['a','b','c'])
+    model = KMeans(n_clusters=cluster_num)
+    kmeans = model.fit_predict(abcDf)
+    kmeansData = pd.DataFrame(data=kmeans, columns=['clusterNum'])
+    kmeansData['songId'] = abcDf.index
+    return kmeansData, model
+
+def init_user_learn_frame():
+    user_learn_frame = pd.DataFrame(columns=['userId', 'songId', 'count'])
+    for user in _userdb.find(projection={'_id':True, 'learning':True, 'favorite':True}):
+        _id = str(user['_id'])
+        user_learn = {}
+        if 'learning' in user:
+            for learn in user['learning']:
+                learn_item = learn['learning']
+                if learn_item not in user_learn:
+                    user_learn[learn_item] = 0
+                user_learn[learn_item]+=1
+
+        if 'favorite' in user:
+            user_favorite = _songdb.find({'singer':{'$in':user['favorite']}},projection={'_id':True})
+            for favorite_song in user_favorite:
+                favorite_song_id = str(favorite_song['_id'])
+                if favorite_song_id not in user_learn:
+                    user_learn[favorite_song_id] = 0
+                user_learn[favorite_song_id]+=1
+                
+        data_frame = pd.DataFrame(data=list(user_learn.items()), columns=['songId', 'count'])
+        data_frame['userId'] = _id
+        user_learn_frame = pd.concat([user_learn_frame,data_frame])
+
+    user_learn_pivot_table = user_learn_frame.pivot_table(values='count', columns='userId', index='songId',aggfunc=sum).fillna(0)
+    item_based_collabor = cosine_similarity(user_learn_pivot_table)
+    item_based_collabor = pd.DataFrame(data=item_based_collabor, index=user_learn.keys(), columns=user_learn.keys())
+    return item_based_collabor
+
+_kmeansCluster, _model = make_cluster_songs(3)
 
 with open('../../words.csv', 'rt', encoding='UTF8') as data:
-
     regex = re.compile('[0-9]') # 가다01 가다02 이런식으로 되어있는 것들 제거하기 위함
     csv_reader = csv.reader(data)
     next(csv_reader) # 헤더 읽음 처리
@@ -41,31 +103,56 @@ with open('../../words.csv', 'rt', encoding='UTF8') as data:
         _temp_dic[word][word_list[2]]=word_list[4]
         _dic[word] = word_list[4]
         _word_dic[word] = word_list[2]
-    print(_temp_dic)
+  
+
 
 @api_view(['GET','POST'])
-def word(request):
-    result = []
-    for word in _dic.keys():
-        if _word_dic[word] in ["명", "형", "동", "부"]:
-            result.append(WordSerializer(Word(_word_dic[word], word)).data)
-    return Response(result)
+def recommendSongs(request, id):
+    item_based_collabor = init_user_learn_frame()
 
-@api_view(['GET','POST'])
-def test(request):
-    # word = '가끔'
-    # if word in _dic and _word_dic[word] in ["명", "형", "동", "부"]:
-    #     print(_dic[word])
-    #     print(_word_dic[word])
-    # a_quiz = []
-    # a_quiz.append(Temp(1,2,"A"))
-    # a_quiz.append(Temp(1,2,"A"))
-    # b_quiz = []
-    # b_quiz.append(Temp(1,2,"A"))
-    # b_quiz.append(Temp(1,2,"A"))
+    user = _userdb.find_one({'_id':ObjectId(id) }, projection={'_id':False,'learning':True, 'a':True ,'b':True, 'c':True})
+    learn = []
+    if 'learning' in user:
+        for item in user['learning'][-10:]:
+            learn.append(item['learning'])
+            
+    learn.reverse()
+    learn_item_add = Counter()
+    weight = 1
+    for songId in learn:
+        now_song_counter = Counter((item_based_collabor[songId].sort_values(ascending=False)[1:]*weight).to_dict())
+        weight -= 0.1
+        learn_item_add = learn_item_add+now_song_counter
     
-    # res = Container(a_quiz, b_quiz)
-    return Response(request)
+    learn_dict = dict(learn_item_add.most_common(12))
+    user_a = user['a']
+    user_b = user['b']
+    user_c = user['c']
+    all_count = user_a+user_b+user_c
+
+    recommend_id = []
+    clusterSong = None
+
+    if(all_count!=0):
+        user_a = user_a/all_count
+        user_b = user_b/all_count
+        user_c = user_c/all_count
+    else:
+        user_a = 0.33
+        user_b = 0.33
+        user_c = 0.34
+
+    user_cluster_num = _model.predict([[user_a, user_b,user_c]])
+    clusterSong = _kmeansCluster[_kmeansCluster['clusterNum']==user_cluster_num[0]]['songId']
+    
+    for song in clusterSong:
+        if str(song) in learn_dict:
+            recommend_id.append(str(song))
+    
+    if len(recommend_id)<4:
+        recommend_id = list(map(lambda objid: str(objid),clusterSong))
+    
+    return Response(recommend_id[:12])
 
 
 @api_view(['GET','POST'])
@@ -286,3 +373,4 @@ def add_counts_array(sentence, lyrics_token_list):
             space_indexes.append(i)
         last_index += len(word)
     return space_indexes
+

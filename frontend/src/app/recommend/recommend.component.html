@@ -1,0 +1,42 @@
+<app-head [id]="id"></app-head>
+<h1 id="recommendHeader" class="d-flex justify-content-center mt-3 display-3">
+  SELECT SONGS
+</h1>
+<div *ngIf="!!songInfos; else spinner" class="container">
+  <div
+    *ngFor="let songs of songInfos; index as i"
+    class="mt-5"
+    [ngClass]="{ active: i == page - 1, hidden: i != page - 1 }"
+  >
+    <div class="row">
+      <div *ngFor="let song of songs" class="col-3">
+        <div class="card m-1">
+          <img [src]="song.album" class="card-img-top" [alt]="song.title" />
+          <div class="card-body">
+            <h1 class="card-title">{{ song.title }}</h1>
+            <h4 class="card-text text-muted">{{ song.singer }}</h4>
+            <div class="float-right">
+              <a
+                [routerLink]="['/song', song.id]"
+                class="text-right btn btn-primary"
+                >Learn</a
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <ngb-pagination
+    [collectionSize]="songInfos.length"
+    [(page)]="page"
+    class="d-flex justify-content-center mt-3"
+    [pageSize]="1"
+    aria-label="Default pagination"
+  ></ngb-pagination>
+</div>
+<ng-template #spinner>
+  <h1>로딩중</h1>
+  <mat-spinner></mat-spinner>
+</ng-template>
