@@ -60,8 +60,14 @@
           <h1>
             <span class="display-4 font-weight-bold"
               >Q{{ num + quizzes.length + 1 }}.</span
-            >
+            > 
             <span>List the words in the correct order</span>
+            <button
+            mat-icon-button
+            (click)="playSound(quiz.sentence)"
+          >
+            <mat-icon>volume_up</mat-icon>
+          </button>
           </h1>
           <div class="question content">
             <div

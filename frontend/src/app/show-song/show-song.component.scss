@@ -20,13 +20,13 @@
   font-weight: 600;
 }
 .a_class {
-  color: red;
+  color: $red-color;
 }
 .b_class {
-  color: #ffcc00;
+  color: $yellow-color;
 }
 .c_class {
-  color: blue;
+  color: $blue-color;
 }
 .kor {
   font-size: 23px;
@@ -38,4 +38,9 @@
   position: absolute;
   top: 70px;
   right: 30px;
+}
+
+#singer {
+  width: 400px;
+  height: 400px;
 }

@@ -25,6 +25,7 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { RecommendComponent } from './recommend/recommend.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import {MatChipsModule} from '@angular/material/chips';
+import {HttpClientModule} from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -39,6 +40,7 @@ import {MatChipsModule} from '@angular/material/chips';
     HeadComponent,
     SongQuizComponent,
     RecommendComponent,
+  
   ],
   imports: [
     BrowserModule,
@@ -56,7 +58,8 @@ import {MatChipsModule} from '@angular/material/chips';
     MatFormFieldModule,
     MatProgressSpinnerModule,
     MatAutocompleteModule,
-    MatChipsModule
+    MatChipsModule,
+    HttpClientModule
   ],
   providers: [],
   bootstrap: [AppComponent],

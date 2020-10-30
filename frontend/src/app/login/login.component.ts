@@ -48,16 +48,18 @@ export class LoginComponent implements OnInit {
       this.http
         .post(`${this.apiBaseUrl}/api/users/login`, formData)
         .subscribe((v) => {
-          console.log(v);
-          let id = JSON.parse(v['_body'])._id;
-          console.log(id);
-          if (!!id) {
-            localStorage.setItem('auth', id);
+          if(!!v){
+            console.log(v);
+            let id = JSON.parse(v['_body'])._id;
             console.log(id);
-            this.router.navigate(['/main']);
-          } else {
+              localStorage.setItem('auth', id);
+              console.log(id);
+              this.router.navigate(['/main']);
+          }else {
             alert('Login Failed');
           }
+        }, error=>{
+          alert('Login Failed');
         });
     }
   }

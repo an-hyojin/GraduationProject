@@ -17,13 +17,15 @@ export class RecommendComponent implements OnInit {
   pageSize = 4;
   constructor(private http: Http) {}
   id: string;
-  songInfos: SongInfo[][] = [];
+  songInfos: SongInfo[][];
   ngOnInit(): void {
+    
     if (!!localStorage.getItem('id')) {
       this.id = localStorage.getItem('id');
     }
 
     this.getRecommendItem().subscribe((v) => {
+      this.songInfos = [];
       let res = JSON.parse(v._body);
       for (let i = 0; i < res.length; i++) {
         if (i % this.pageSize == 0) {
@@ -32,6 +34,8 @@ export class RecommendComponent implements OnInit {
         this.songInfos[Math.floor(i / 4)].push(new SongInfo(res[i]));
       }
       console.log(this.songInfos);
+    }, error=>{
+      alert('실패했습니다. 다시 접속해주세요');
     });
   }
 

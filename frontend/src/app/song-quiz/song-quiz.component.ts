@@ -39,6 +39,8 @@ export class SongQuizComponent implements OnInit {
   songId: String;
   title: string;
   singer: string;
+  private playSoundBaseUrl ="http://localhost:4000/api/tts?morph=";
+  
   getQuiz(): Observable<any> {
     // 노래 정보 가져오기
     let body = { songId: this.songId };
@@ -164,5 +166,12 @@ export class SongQuizComponent implements OnInit {
       this.http.post(`${this.apiBaseUrl}/api/quizzes/`, body, options);
     }
     console.log(this.solve);
+  }
+
+  playSound(playWord:string){
+    const audio = new Audio();
+    audio.src = this.playSoundBaseUrl+playWord;
+    audio.load();
+    audio.play();
   }
 }

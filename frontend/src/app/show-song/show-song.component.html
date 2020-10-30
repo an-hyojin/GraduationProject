@@ -8,7 +8,7 @@
     <div class="row d-flex align-items-center">
       <div class="col-md-5 justify-content-center d-flex">
         <div>
-          <img [src]="song.album" [alt]="song.singer" />
+          <img id="singer" [src]="song.album" [alt]="song.singer" />
         </div>
       </div>
       <div class="col-md-7">
@@ -91,21 +91,43 @@
       </div>
     </div>
     <div class="row d-flex align-items-center">
-      <button class="btn btn-primary text-center mx-auto" (click)="goQuiz()">
+      <button class="btn text-center mx-auto btn-primary"  (click)="goQuiz()">
         COMPLETE
       </button>
     </div>
   </div>
-  <div *ngIf="!!dict" class="dict alert alert-info m-3">
+  <div *ngIf="!!dict" class="dict alert alert-info m-3 pt-3 pb-3">
     <button type="button" class="close" (click)="dict = null">
       <span>&times;</span>
     </button>
+  <div class=" pl-3 pr-5">
     <h4>words</h4>
-    <span>: {{ dict.morph }}</span>
+    <button
+    mat-icon-button
+    (click)="playSound(dict.morph)"
+  >
+    <mat-icon>volume_up</mat-icon>
+  </button>
+    <span> {{ dict.morph }}</span>
     <h4>root</h4>
-    <span>: {{ dict.root }}</span>
+
+    <button
+    mat-icon-button
+    (click)="playSound(dict.root)"
+  >
+    <mat-icon>volume_up</mat-icon>
+  </button>
+    <span> {{ dict.root }}</span>
     <h4>means</h4>
-    <span>: {{ dict.trans }}</span>
+
+    <button
+    mat-icon-button
+    (click)="playSound(dict.trans)"
+  >
+    <mat-icon>volume_up</mat-icon>
+  </button>
+    <span> {{ dict.trans }}</span>
+  </div>
   </div>
 
   <ng-template #spinner>

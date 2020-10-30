@@ -78,6 +78,8 @@ export class JoinComponent implements OnInit {
           } else {
             alert('Failed to sign up for membership!');
           }
+        }, error=>{
+          alert('Failed to sign up for membership!');
         });
     }
   }
