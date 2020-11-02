@@ -42,7 +42,7 @@ def make_cluster_songs(cluster_num=3):
     abc = []
     title = []
     for song in _songdb.find(projection={'_id': True, 'a_count':True, 'b_count':True,'c_count':True}):
-        title.append(song['_id'])
+        title.append(str(song['_id']))
         a = song['a_count']
         b = song['b_count']
         c = song['c_count']
@@ -51,8 +51,8 @@ def make_cluster_songs(cluster_num=3):
     abcDf = pd.DataFrame(data=abc, index=title, columns=['a','b','c'])
     model = KMeans(n_clusters=cluster_num)
     kmeans = model.fit_predict(abcDf)
-    kmeansData = pd.DataFrame(data=kmeans, columns=['clusterNum'])
-    kmeansData['songId'] = abcDf.index
+    kmeansData = pd.DataFrame(data=kmeans, columns=['clusterNum'], index=abcDf.index)
+    
     return kmeansData, model
 
 def init_user_learn_frame():
@@ -81,7 +81,7 @@ def init_user_learn_frame():
 
     user_learn_pivot_table = user_learn_frame.pivot_table(values='count', columns='userId', index='songId',aggfunc=sum).fillna(0)
     item_based_collabor = cosine_similarity(user_learn_pivot_table)
-    item_based_collabor = pd.DataFrame(data=item_based_collabor, index=user_learn.keys(), columns=user_learn.keys())
+    item_based_collabor = pd.DataFrame(data=item_based_collabor, index=user_learn_pivot_table.index, columns=user_learn_pivot_table.index)
     return item_based_collabor
 
 _kmeansCluster, _model = make_cluster_songs(3)
@@ -117,14 +117,19 @@ def recommendSongs(request, id):
             learn.append(item['learning'])
             
     learn.reverse()
-    learn_item_add = Counter()
-    weight = 1
-    for songId in learn:
-        now_song_counter = Counter((item_based_collabor[songId].sort_values(ascending=False)[1:]*weight).to_dict())
-        weight -= 0.1
-        learn_item_add = learn_item_add+now_song_counter
+    history_frame = pd.DataFrame(index=item_based_collabor.index, columns=['recommend']).fillna(0)
     
-    learn_dict = dict(learn_item_add.most_common(12))
+    weight = 1
+
+    for songId in learn:
+        song_similar_frame = pd.DataFrame(data=item_based_collabor[songId], index=item_based_collabor.index)
+        song_similar_frame.rename(columns={songId:'recommend'}, inplace=True)
+        song_similar_frame.loc[songId]['recommend']=0
+        history_frame +=song_similar_frame*weight
+        weight -= 0.1
+    
+    history_frame = history_frame['recommend'].sort_values(ascending=False)[:12]
+
     user_a = user['a']
     user_b = user['b']
     user_c = user['c']
@@ -142,12 +147,12 @@ def recommendSongs(request, id):
         user_b = 0.33
         user_c = 0.34
 
-    user_cluster_num = _model.predict([[user_a, user_b,user_c]])
-    clusterSong = _kmeansCluster[_kmeansCluster['clusterNum']==user_cluster_num[0]]['songId']
-    
-    for song in clusterSong:
-        if str(song) in learn_dict:
-            recommend_id.append(str(song))
+    user_cluster_num = _model.predict([[user_a, user_b,user_c]])[0]
+    clusterSong = _kmeansCluster[_kmeansCluster['clusterNum']==user_cluster_num].index
+       
+    for songId in history_frame.index:
+        if _kmeansCluster.loc[songId,'clusterNum']== user_cluster_num:
+            recommend_id.append(songId)
     
     if len(recommend_id)<4:
         recommend_id = list(map(lambda objid: str(objid),clusterSong))
