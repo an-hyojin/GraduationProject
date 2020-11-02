@@ -26,6 +26,7 @@ import { RecommendComponent } from './recommend/recommend.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import {MatChipsModule} from '@angular/material/chips';
 import {HttpClientModule} from '@angular/common/http';
+import {ScrollingModule} from '@angular/cdk/scrolling';
 
 @NgModule({
   declarations: [
@@ -59,7 +60,8 @@ import {HttpClientModule} from '@angular/common/http';
     MatProgressSpinnerModule,
     MatAutocompleteModule,
     MatChipsModule,
-    HttpClientModule
+    HttpClientModule,
+    ScrollingModule
   ],
   providers: [],
   bootstrap: [AppComponent],
