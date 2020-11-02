@@ -23,6 +23,7 @@ import { SongQuizComponent } from './song-quiz/song-quiz.component';
 import { HttpModule } from '@angular/http';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import {MatChipsModule} from '@angular/material/chips';
+import {ScrollingModule} from '@angular/cdk/scrolling';
 
 @NgModule({
   declarations: [
@@ -52,7 +53,8 @@ import {MatChipsModule} from '@angular/material/chips';
     BrowserAnimationsModule,
     MatFormFieldModule,
     MatAutocompleteModule,
-    MatChipsModule
+    MatChipsModule,
+    ScrollingModule
   ],
   providers: [],
   bootstrap: [AppComponent],

@@ -1,5 +1,4 @@
 <div class="align-middle">
-    
 <mat-form-field class="formfield" appearance="fill">
     <mat-label>Title or Singer</mat-label>
     <input [formControl]="songInfo" matInput placeholder="Placeholder" id="search-form" [matAutocomplete]="auto">
@@ -7,21 +6,25 @@
         <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
             {{option}}
         </mat-option>
-    </mat-autocomplete>
+    </mat-autocomplete> 
 </mat-form-field>
 <button class="btn btn-dark" (click)="search()">Search</button>
-<div id="result-form" >
-    <div class="result-item row" *ngFor="let song of resultList; index as i" (click)="goSong(song.id)"
-    style="cursor: pointer;">
-        <div class="col-sm-4">
-            <img class="album" [src]="song.album" [alt]="song.singer"/>
-        </div>
-        <div class="col-sm-auto">
-            <span class="title">{{song.title}}</span>
-            <br><br>
-            <span class="singer">{{song.singer}}</span>
-        </div> 
-    </div>
-</div>
-
+<table class="table m-auto">
+    <tbody>
+        <tr class="result-item" 
+        *ngFor="let song of resultList; index as i" 
+        (click)="goSong(song.id)">
+            <td class="row">
+                <div class="col-sm-4">
+                    <img class="album" [src]="song.album" [alt]="song.singer"/>
+                </div>
+                <div class="col-sm-auto">
+                    <span class="title">{{song.title}}</span>
+                    <br><br>
+                    <span class="singer">{{song.singer}}</span>
+                </div> 
+            </td>
+        </tr>
+    </tbody>
+</table>
 </div>

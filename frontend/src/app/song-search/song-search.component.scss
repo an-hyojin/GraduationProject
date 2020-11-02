@@ -1,7 +1,9 @@
+@import '../../variable.scss';
 .result-item{
-    border: solid 2px rgb(231, 231, 231);
     margin: 5px;
-    box-shadow: 2px 2px 2px gray;
+    &:hover{
+        background-color: $light-gray;
+    }
 }
 .title{
     font-size: 15px;
