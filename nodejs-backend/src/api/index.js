@@ -54,7 +54,7 @@ api.get("/temp", async (ctx, next) => {
   let results = await end;
   let body = [];
   ctx.body = "호출";
-  for (i = 54; i < 59; i++) {
+  for (i = 65; i < 70; i++) {
     console.log(i, results[i].Title)
     body.push(results[i]);
   }
@@ -72,7 +72,7 @@ api.get("/temp", async (ctx, next) => {
       async (e, r, b) => {
         resultArray = b;
         ctx.body = b;
-        console.log(b);
+      
         resultArray.forEach((element) => {
           let song = new Song(element);
           song.save();

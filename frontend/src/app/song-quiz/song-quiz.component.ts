@@ -10,6 +10,7 @@ import { Quiz } from 'src/models/quiz';
 import { WordQuiz } from 'src/models/word-quiz'
 import { SentenceQuiz} from 'src/models/sentence-quiz';
 import { element } from 'protractor';
+import { getLocaleExtraDayPeriodRules } from '@angular/common';
 
 @Component({
   selector: 'app-song-quiz',
@@ -134,7 +135,7 @@ export class SongQuizComponent implements OnInit {
         }
       }
     }
-    console.log(a, b, c);
+   
     if (this.solve) {
       let count = 0;
       this.correctList = [];
@@ -151,7 +152,7 @@ export class SongQuizComponent implements OnInit {
 
       let body = {
         songId: this.songId,
-        userId: this.id,
+        userId:localStorage.getItem('auth'),
         a: a,
         b: b,
         c: c,
@@ -163,9 +164,13 @@ export class SongQuizComponent implements OnInit {
       let options = new RequestOptions({
         headers: headers,
       });
-      this.http.post(`${this.apiBaseUrl}/api/quizzes/`, body, options);
+      
+      if (!!localStorage.getItem('auth')) {
+        console.log(body);
+        this.http.post(`${this.apiBaseUrl}/api/quizzes/`, body, options).subscribe(v=>console.log("호출"));
+      }
+     
     }
-    console.log(this.solve);
   }
 
   playSound(playWord:string){

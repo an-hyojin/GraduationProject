@@ -41,7 +41,7 @@ export class ShowSongComponent implements OnInit {
   ngOnInit(): void {
     this.songId = this.route.snapshot.paramMap.get('songId');
     this.id = localStorage.getItem('id');
-    console.log(this.songId);
+   
     this.getSong().subscribe((v) => {
       this.song = Song.parseFrom(JSON.parse(v._body));
       for (let i = 0; i < this.song.sentences.length / 5; i++) {

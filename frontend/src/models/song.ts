@@ -19,7 +19,7 @@ export class Song {
   static parseFrom(json): Song {
     const o: Song = new Song();
     o.id = json._id;
-    console.log(o.id);
+   
     o.title = json.title;
     o.singer = json.singer;
     o.album = json.album;
@@ -35,7 +35,7 @@ export class Song {
     o.b_quiz_info = json.b_quiz_info;
     o.c_quiz_info = json.c_quiz_info;
     o.morphs_trans = json.morphs_trans;
-    console.log(json);
+    
     return o;
   }
 }

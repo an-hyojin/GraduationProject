@@ -62,7 +62,7 @@ export class JoinComponent implements OnInit {
     if(this.resultList.length==0){
       this.chipList.errorState = true;
     }
-    console.log(this.joinForm);
+  
     if (this.joinForm.valid) {
       let formData = new FormData();
       formData.append('id', this.joinForm.value.id);
@@ -97,7 +97,7 @@ export class JoinComponent implements OnInit {
           this.searchList.push(element.singer);
         }
       });
-      console.log(this.searchList);
+     
       this.filteredSingers = this.singerCtrl.valueChanges.pipe(
         startWith(''),
         map(value => this._filter(value))
@@ -127,7 +127,7 @@ export class JoinComponent implements OnInit {
     if (this.password.hasError('required')) {
       return 'You must enter a value';
     }
-    console.log(this.password);
+   
     return this.password.hasError('minlength')
       ? 'Please enter at least 6 characters.'
       : '';
@@ -168,7 +168,6 @@ export class JoinComponent implements OnInit {
   }
 
   private _filter(value: string): string[] {
-    console.log(value);
     return this.searchList.filter(option => option.includes(value));
   }
  

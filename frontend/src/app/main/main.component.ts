@@ -16,8 +16,6 @@ export class MainComponent implements OnInit {
   user: User;
   id: string;
   ngOnInit(): void {
-    console.log(!localStorage.getItem('auth'));
-
     if (!!localStorage.getItem('auth')) {
       this.getUser(localStorage.getItem('auth')).subscribe((v) => {
         this.user = new User(JSON.parse(v._body));

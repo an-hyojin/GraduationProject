@@ -6,7 +6,7 @@ export class User {
   email: string;
   learning: SongInfo[];
   constructor(json: any) {
-    console.log(json);
+   
     this.id = json.id;
     this._id = json._id;
     this.email = json.email;

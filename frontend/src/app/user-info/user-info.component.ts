@@ -17,6 +17,5 @@ export class UserInfoComponent implements OnChanges {
   @Input() user: User;
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log(this.user);
-  }
+     }
 }

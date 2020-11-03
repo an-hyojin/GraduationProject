@@ -273,7 +273,7 @@ def crawling():
     debug = 0 # 추후 삭제
 
     for row in rows:
-        if debug >= 2 :
+        if debug >= 10 :
             break
 
         debug += 1
@@ -296,8 +296,8 @@ def crawling():
             data['Singer']=singer[5:].strip()
             data['Album']=album_img_url
             data['Lyrics']=lylics.strip()
-
-            matrix.append(data)
+            if isHangel(data['Lyrics'])>=0.6:
+                matrix.append(data)
             
             close_btn = browser.find_elements_by_css_selector("#app > div.modal > div > div > a")[0].click() # 가사 창닫기
 
@@ -340,11 +340,9 @@ def isHangel(str): # 한글이 몇 퍼센트의 비율로 들어가있는지 판
     
     lyricArray = re.split(' ', lyrics)
     hangel = 0
-    
     for eachlyric in lyricArray:
         if bool(re.search(pattern, eachlyric)): # 한글 단어일 경우
-            hangel = hangel + 1
-            
+            hangel = hangel + 1   
     return hangel/len(lyricArray)
 
 def wordslevel(lyrics_token_list):
