@@ -40,11 +40,10 @@ exports.join = async (ctx) => {
     id: Joi.string().required(),
     password: Joi.string().required(),
     email: Joi.string().required().email(),
-    //favorite : Joi.string().required()
+    favorite : Joi.required()
   }); // 데이터 검증
-
   const validation = schema.validate(ctx.request.body);
-
+  console.log(validation);
   if (validation.error) {
     ctx.status = 400;
     return;

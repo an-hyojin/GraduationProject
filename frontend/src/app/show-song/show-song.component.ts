@@ -65,13 +65,9 @@ export class ShowSongComponent implements OnInit {
     audio.load();
     audio.play();
   }
-  closeModal(){
-    this.dict = null;
-  }
   dictionary(morph: string, trans: string, pos: string) {
     // 클릭하는 부분 - morph:형태소, trans: 번역본, pos:원형
     // morph가 들리게
-    this.closeModal();
     this.dict = new DictDiv(morph, trans, pos);
    
   }

@@ -68,10 +68,14 @@ export class JoinComponent implements OnInit {
       formData.append('id', this.joinForm.value.id);
       formData.append('password', this.joinForm.value.password);
       formData.append('email', this.joinForm.value.email);
+      this.resultList.forEach(element => {
+        formData.append('favorite', element);
+      });
       this.http
         .post(`${this.apiBaseUrl}/api/users/join`, formData)
         .subscribe((v) => {
           let result = v['_body'] == 'true';
+          console.log(result)
           if (result) {
             alert('Success to Join');
             this.router.navigate(['/login']);
