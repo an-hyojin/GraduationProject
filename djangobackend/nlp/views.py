@@ -115,9 +115,8 @@ def recommendSongs(request, id):
     if 'learning' in user:
         for item in user['learning'][-10:]:
             learn.append(item['learning'])
-    # print(user['favorite'])
+    
     if len(learn)<=10 and 'favorite' in user:
-        
         user_favorite = _songdb.find({'singer':{'$in':user['favorite']}},projection={'_id':True, 'singer':True})
         singer = set()
         for favorite_song in user_favorite:
@@ -126,7 +125,6 @@ def recommendSongs(request, id):
                 learn.append(favorite_song_id)
                 singer.add(favorite_song['singer'])
         
-    
     learn.reverse()
     history_frame = pd.DataFrame(index=item_based_collabor.index, columns=['recommend']).fillna(0)
     
@@ -165,11 +163,11 @@ def recommendSongs(request, id):
         if _kmeansCluster.loc[songId,'clusterNum']== user_cluster_num:
             recommend_id.append(songId)
     
-    # if len(recommend_id)<4:
-    #     recommend_id = list(map(lambda objid: str(objid),history_frame.index))
+    if len(recommend_id)<4:
+        recommend_id = list(map(lambda objid: str(objid),history_frame.index))
     
-    # if len(recommend_id)<4:
-    #     recommend_id = list(map(lambda objid: str(objid),clusterSong))
+    if len(recommend_id)<4:
+        recommend_id = list(map(lambda objid: str(objid),clusterSong))
     
     
 
