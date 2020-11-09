@@ -20,20 +20,27 @@
     </div>
     <div class="h-100 overflow-auto">
         <div style="height:100px" >
-            <div class="result-item row" *ngFor="let song of resultList; index as i" (click)="goSong(song.id)"
-            style="cursor: pointer;">
-                <div class="col-sm-4">
-                    <img class="album" [src]="song.album" [alt]="song.singer"/>
-                </div>
-                <div class="col-sm-auto">
-                    <span class="title">{{song.title}}</span>
-                    <br><br>
-                    <span class="singer">{{song.singer}}</span>
-                </div> 
-            </div>
-         </div>
+            <table class="table m-auto">
+                <tbody>
+                    <tr class="result-item" 
+                    *ngFor="let song of resultList; index as i" 
+                    (click)="goSong(song.id)">
+                        <td class="row">
+                            <div class="col-sm-3">
+                                <img class="album" [src]="song.album" [alt]="song.singer"/>
+                            </div>
+                            <div class="col-sm-9">
+                                <span class="title">{{song.title}}</span>
+                                <br/><br/>
+                                <span class="singer">{{song.singer}}</span>
+                            </div> 
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+     </div>
        
-    </div>
+</div>
 
     
-    </div>

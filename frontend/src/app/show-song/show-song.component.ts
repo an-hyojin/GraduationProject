@@ -10,9 +10,12 @@ import { ActivatedRoute, Router } from '@angular/router';
   templateUrl: './show-song.component.html',
   styleUrls: ['./show-song.component.scss'],
 })
+
 export class ShowSongComponent implements OnInit {
   private apiBaseUrl = environment.apiBaseUrl;
+  private playSoundBaseUrl ="http://localhost:4000/api/tts?morph=";
   song: Song;
+  closed:boolean = false;
   userName: String;
   songslice = [];
   dict: DictDiv;
@@ -38,7 +41,7 @@ export class ShowSongComponent implements OnInit {
   ngOnInit(): void {
     this.songId = this.route.snapshot.paramMap.get('songId');
     this.id = localStorage.getItem('id');
-    console.log(this.songId);
+   
     this.getSong().subscribe((v) => {
       this.song = Song.parseFrom(JSON.parse(v._body));
       for (let i = 0; i < this.song.sentences.length / 5; i++) {
@@ -48,18 +51,31 @@ export class ShowSongComponent implements OnInit {
         }
         this.songslice.push(shows);
       }
+    }, error=>{
+      this.router.navigate(['/main']);
     });
     this.userName = 'USER1';
   }
   goQuiz() {
     this.router.navigate(['/quiz', this.songId]);
   }
+  playSound(playWord:string){
+    const audio = new Audio();
+    audio.src = this.playSoundBaseUrl+playWord;
+    audio.load();
+    audio.play();
+  }
+  closeModal(){
+    this.dict = null;
+  }
   dictionary(morph: string, trans: string, pos: string) {
     // 클릭하는 부분 - morph:형태소, trans: 번역본, pos:원형
     // morph가 들리게
-    console.log(morph, trans, pos);
+    this.closeModal();
     this.dict = new DictDiv(morph, trans, pos);
+   
   }
+  
 }
 class DictDiv {
   morph: string;
@@ -69,5 +85,5 @@ class DictDiv {
     this.morph = morph;
     this.trans = trans;
     this.root = root;
-  }
+ }
 }

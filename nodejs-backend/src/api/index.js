@@ -9,7 +9,6 @@ const quizzes = require("./quizzes");
 const fs = require("fs");
 const csv = require("csv-parser");
 const { mongoose } = require("mongoose");
-
 api.use("/songs", songs.routes());
 api.use("/users", users.routes());
 api.use("/quizzes", quizzes.routes());
@@ -31,15 +30,35 @@ var end = new Promise(function (resolve, reject) {
     
 });
 
+api.get("/tts", async(ctx, next)=>{
+  const api_url ='https://kakaoi-newtone-openapi.kakao.com/v1/synthesize';
+  let api_key = 'ea9db858b3e61bb1d6a25eaa17329c34';
+  const { morph } = ctx.request.query;
+  let body = "<speak><voice name='WOMAN_READ_CALM'>"+morph+"</voice></speak>";
+  const result = await request.post({
+    uri:api_url,
+    body,
+    method: 'POST',
+    headers: {
+      'Authorization': "KakaoAK " + api_key,
+      'Content-Type': 'application/xml',
+    }
+  });
+  var writeStream = fs.createWriteStream('./tts1.mp3');
+  
+  result.pipe(writeStream); // file로 출력
+  ctx.body = result;
+})
 
 api.get("/temp", async (ctx, next) => {
   let results = await end;
   let body = [];
   ctx.body = "호출";
-  for (i = 39; i < 49; i++) {
-    console.log(results[i].Title)
+  for (i = 111; i < 113; i++) {
+    console.log(i, results[i].Title)
     body.push(results[i]);
   }
+  
   const uri = "http://localhost:8000/nlp/preprocessing/";
   try {
     const results = await request.post(
@@ -53,11 +72,11 @@ api.get("/temp", async (ctx, next) => {
       async (e, r, b) => {
         resultArray = b;
         ctx.body = b;
-        console.log(b);
+      
         resultArray.forEach((element) => {
           let song = new Song(element);
           song.save();
-          console.log(element);
+          console.log(element.title);
         });
       }
     );

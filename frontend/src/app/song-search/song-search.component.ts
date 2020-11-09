@@ -33,7 +33,6 @@ export class SongSearchComponent implements OnInit {
        
       });
       this.resultList.push(...this.songList);
-      console.log(this.songList);
     });
 
     this.filteredOptions = this.songInfo.valueChanges.pipe(
@@ -63,11 +62,11 @@ export class SongSearchComponent implements OnInit {
 
   }
   goSong(id) {
-    console.log(id);
+   
     this.router.navigate(['/song', id]);
   }
   private _filter(value: string): string[] {
-    console.log(value);
+   
     return this.searchList.filter(option => option.includes(value));
   }
 }

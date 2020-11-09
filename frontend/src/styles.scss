@@ -13,3 +13,33 @@ body {
   margin: 0;
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
+.btn-primary,
+.btn-primary:active,
+.btn-primary:visited {
+  border-color: $background-color !important;
+  background-color: $background-color !important;
+}
+
+.btn-primary:hover {
+  border-color: $background-color-dark !important;
+  background-color: $background-color-dark !important;
+}
+.btn-outline-primary,
+.btn-outline-primary:active,
+.btn-outline-primary:hover {
+  border-color: $background-color !important;
+  color: $background-color !important;
+}
+
+.btn-outline-primary:hover {
+  background-color: $background-color !important;
+  border-color: $background-color !important;
+  color: white !important;
+}
+
+.mat-step-header .mat-step-icon-selected,
+.mat-step-header .mat-step-icon-state-done,
+.mat-step-header .mat-step-icon-state-edit {
+  background-color: $background-color !important;
+  color: #fff !important;
+}

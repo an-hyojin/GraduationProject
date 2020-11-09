@@ -13,7 +13,7 @@ exports.list = async (ctx) => {
 };
 
 exports.post = async (ctx) => {
-  console.log(ctx);
+
   const { songId } = ctx.request.body;
 
   let song;
@@ -56,13 +56,12 @@ exports.recommend = async (ctx) => {
       json: true,
       encoding: null,
     });
-    console.log(recommnedSongIds);
     songlist = await Song.find(
       { _id: { $in: recommnedSongIds } },
       { singer: 1, title: 1, _id: 1, album: 1 }
     ).exec();
     ctx.body = songlist;
-    console.log(songlist);
+   
   } catch (error) {
     console.log(error);
     ctx.body = error;

@@ -37,27 +37,26 @@ export class LoginComponent implements OnInit {
     });
   }
   onSubmit() {
-    console.log(this.loginForm.value);
-    console.log(this.loginForm.valid);
-
     if (this.loginForm.valid) {
       let formData = new FormData();
       formData.append('id', this.loginForm.value.id);
       formData.append('password', this.loginForm.value.password);
-      console.log(`${this.apiBaseUrl}/api/users/login`);
+
       this.http
         .post(`${this.apiBaseUrl}/api/users/login`, formData)
         .subscribe((v) => {
-          console.log(v);
-          let id = JSON.parse(v['_body'])._id;
-          console.log(id);
-          if (!!id) {
-            localStorage.setItem('auth', id);
-            console.log(id);
-            this.router.navigate(['/main']);
-          } else {
+          if(!!v){
+            const user = JSON.parse(v['_body']);
+            const auth = user.auth;
+            const id = user.id;
+              localStorage.setItem('auth', auth);
+              localStorage.setItem('id', id);
+              this.router.navigate(['/main']);
+          }else {
             alert('Login Failed');
           }
+        }, error=>{
+          alert('Login Failed');
         });
     }
   }
@@ -70,7 +69,6 @@ export class LoginComponent implements OnInit {
     if (this.id.hasError('required')) {
       return 'You must enter a value';
     }
-    console.log(this.email.errors);
     return this.id.hasError('minlength')
       ? 'Please enter at least 6 characters.'
       : '';

@@ -20,6 +20,7 @@ exports.quiz = async (ctx, next) => {
         morphs: 1,
         pos_list: 1,
         count_list: 1,
+        sentences:1
       }
     ).exec();
     allquiz = {};
@@ -69,7 +70,7 @@ exports.quiz = async (ctx, next) => {
       let item = {};
       item.trans = song.translation[index];
       item.morphs = song.morphs[index];
-
+      item.sentence = song.sentences[index];
       sentence_quiz.push(item);
     }
     allquiz.title = song.title;

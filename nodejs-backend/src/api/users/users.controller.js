@@ -3,7 +3,7 @@ const User = require("../../models/user");
 const Song = require("../../models/song");
 // 로그인
 exports.login = async (ctx) => {
-  console.log(ctx.request.body);
+ 
   const schema = Joi.object({
     id: Joi.string().required(),
     password: Joi.string().required(),
@@ -17,7 +17,7 @@ exports.login = async (ctx) => {
   }
 
   const { id, password } = ctx.request.body;
-
+  
   let user;
 
   try {
@@ -31,7 +31,7 @@ exports.login = async (ctx) => {
     ctx.status = 403;
     return;
   } // db에 없거나 비밀번호 틀리면 X
-  ctx.body = user;
+  ctx.body ={id:user.id, auth:user._id};
 };
 
 // 회원가입
@@ -80,7 +80,7 @@ exports.info = async (ctx, next) => {
   const { id } = ctx.request.body;
 
   let user = await User.findById({ _id: id }, { password: 0 }).exec();
-  console.log(user);
+ 
   let learn = [];
   if (!!user.learning && user.learning.length > 0) {
     let learnSongs = user.learning.map((v) => v.learning);

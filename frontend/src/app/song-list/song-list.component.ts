@@ -28,7 +28,7 @@ export class SongListComponent implements OnInit {
     return this.http.get(`${this.apiBaseUrl}/api/songs/topten`);
   }
   goSong(id) {
-    console.log(id);
+   
     this.router.navigate(['/song', id]);
   }
 }

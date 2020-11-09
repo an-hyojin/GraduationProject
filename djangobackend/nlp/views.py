@@ -42,7 +42,7 @@ def make_cluster_songs(cluster_num=3):
     abc = []
     title = []
     for song in _songdb.find(projection={'_id': True, 'a_count':True, 'b_count':True,'c_count':True}):
-        title.append(song['_id'])
+        title.append(str(song['_id']))
         a = song['a_count']
         b = song['b_count']
         c = song['c_count']
@@ -51,8 +51,8 @@ def make_cluster_songs(cluster_num=3):
     abcDf = pd.DataFrame(data=abc, index=title, columns=['a','b','c'])
     model = KMeans(n_clusters=cluster_num)
     kmeans = model.fit_predict(abcDf)
-    kmeansData = pd.DataFrame(data=kmeans, columns=['clusterNum'])
-    kmeansData['songId'] = abcDf.index
+    kmeansData = pd.DataFrame(data=kmeans, columns=['clusterNum'], index=abcDf.index)
+    
     return kmeansData, model
 
 def init_user_learn_frame():
@@ -81,7 +81,7 @@ def init_user_learn_frame():
 
     user_learn_pivot_table = user_learn_frame.pivot_table(values='count', columns='userId', index='songId',aggfunc=sum).fillna(0)
     item_based_collabor = cosine_similarity(user_learn_pivot_table)
-    item_based_collabor = pd.DataFrame(data=item_based_collabor, index=user_learn.keys(), columns=user_learn.keys())
+    item_based_collabor = pd.DataFrame(data=item_based_collabor, index=user_learn_pivot_table.index, columns=user_learn_pivot_table.index)
     return item_based_collabor
 
 _kmeansCluster, _model = make_cluster_songs(3)
@@ -117,14 +117,19 @@ def recommendSongs(request, id):
             learn.append(item['learning'])
             
     learn.reverse()
-    learn_item_add = Counter()
-    weight = 1
-    for songId in learn:
-        now_song_counter = Counter((item_based_collabor[songId].sort_values(ascending=False)[1:]*weight).to_dict())
-        weight -= 0.1
-        learn_item_add = learn_item_add+now_song_counter
+    history_frame = pd.DataFrame(index=item_based_collabor.index, columns=['recommend']).fillna(0)
     
-    learn_dict = dict(learn_item_add.most_common(12))
+    weight = 1
+
+    for songId in learn:
+        song_similar_frame = pd.DataFrame(data=item_based_collabor[songId], index=item_based_collabor.index)
+        song_similar_frame.rename(columns={songId:'recommend'}, inplace=True)
+        song_similar_frame.loc[songId]['recommend']=0
+        history_frame +=song_similar_frame*weight
+        weight -= 0.1
+    
+    history_frame = history_frame['recommend'].sort_values(ascending=False)[:12]
+
     user_a = user['a']
     user_b = user['b']
     user_c = user['c']
@@ -142,12 +147,12 @@ def recommendSongs(request, id):
         user_b = 0.33
         user_c = 0.34
 
-    user_cluster_num = _model.predict([[user_a, user_b,user_c]])
-    clusterSong = _kmeansCluster[_kmeansCluster['clusterNum']==user_cluster_num[0]]['songId']
-    
-    for song in clusterSong:
-        if str(song) in learn_dict:
-            recommend_id.append(str(song))
+    user_cluster_num = _model.predict([[user_a, user_b,user_c]])[0]
+    clusterSong = _kmeansCluster[_kmeansCluster['clusterNum']==user_cluster_num].index
+       
+    for songId in history_frame.index:
+        if _kmeansCluster.loc[songId,'clusterNum']== user_cluster_num:
+            recommend_id.append(songId)
     
     if len(recommend_id)<4:
         recommend_id = list(map(lambda objid: str(objid),clusterSong))
@@ -190,13 +195,14 @@ def makeData(json):
         b_count = 0
         c_count = 0
         sentence_index = 0
-        
+        isIn = True
+
         #가사 센텐스 # 가사 짜른거 센텐스 단위 # 가사 짜른거 2 2 1  #파파고 센텐스단위 번역본 
-        for line in json_elements['Lyrics'].split("\n"):
+        for line in re.split("\n+",json_elements['Lyrics']):
             if len(line.strip())==0:
                 continue
             sentences.append(line)
-            translation.append(papago(line))
+            
             trans = []
             word_index=0
             pos_info =[]
@@ -216,6 +222,11 @@ def makeData(json):
                             c_quiz_info.append(quiz)
                 trans.append(papago(stem[0]))
                 word_index+=1
+            trans_sentence = papago(line)
+            if trans_sentence=="번역 실패":
+                isIn = False
+                break
+            translation.append(trans_sentence)
             morphs = okt.morphs(line)
             morphs_list.append(morphs)
             morphs_trans.append(trans)
@@ -229,8 +240,9 @@ def makeData(json):
             c_list.append(temp_c)
             count_list.append(add_counts_array(line, morphs))
             sentence_index +=1
-        song_obj = Song(json_elements['Singer'], json_elements['Title'], albumLink, sentences, morphs_list,pos_list, count_list, a_count, b_count, c_count, a_list, b_list, c_list, translation, morphs_trans, a_quiz_info,b_quiz_info,c_quiz_info)
-        result.append(SongSerializer(song_obj).data)
+        if isIn:
+            song_obj = Song(json_elements['Singer'], json_elements['Title'], albumLink, sentences, morphs_list,pos_list, count_list, a_count, b_count, c_count, a_list, b_list, c_list, translation, morphs_trans, a_quiz_info,b_quiz_info,c_quiz_info)
+            result.append(SongSerializer(song_obj).data)
     return result
 
 
@@ -268,7 +280,7 @@ def crawling():
     debug = 0 # 추후 삭제
 
     for row in rows:
-        if debug >= 2 :
+        if debug >= 10 :
             break
 
         debug += 1
@@ -291,8 +303,8 @@ def crawling():
             data['Singer']=singer[5:].strip()
             data['Album']=album_img_url
             data['Lyrics']=lylics.strip()
-
-            matrix.append(data)
+            if isHangel(data['Lyrics'])>=0.6:
+                matrix.append(data)
             
             close_btn = browser.find_elements_by_css_selector("#app > div.modal > div > div > a")[0].click() # 가사 창닫기
 
@@ -327,19 +339,16 @@ def papago(lyric):
 
     
 
-def isHangel(str): # 한글이 몇 퍼센트의 비율로 들어가있는지 판단
+def isHangel(line): # 한글이 몇 퍼센트의 비율로 들어가있는지 판단
     pattern = re.compile('[가-힣]+')
     #  \n과 \s+ 제거
-    lyrics = re.sub('\n',' ', str)
-    lyrics = re.sub('\s+',' ',lyrics)
+    lyrics = re.sub('\n+',' ', line)
     
-    lyricArray = re.split(' ', lyrics)
+    lyricArray = re.split('\s+', lyrics)
     hangel = 0
-    
     for eachlyric in lyricArray:
         if bool(re.search(pattern, eachlyric)): # 한글 단어일 경우
-            hangel = hangel + 1
-            
+            hangel = hangel + 1   
     return hangel/len(lyricArray)
 
 def wordslevel(lyrics_token_list):
