@@ -18,6 +18,7 @@ const userSchema = new mongoose.Schema({
   },
   email: String,
   learning: [learnSchema],
+  favorite: [String],
   a: { type: Number, default: 0 },
   b: { type: Number, default: 0 },
   c: { type: Number, default: 0 },
@@ -31,11 +32,12 @@ function hash(password) {
     .digest("hex");
 }
 
-userSchema.statics.join = function ({ id, password, email }) {
+userSchema.statics.join = function ({ id, password, email, favorite }) {
   const user = new this({
     id,
     password: hash(password),
     email,
+    favorite
   });
   return user.save();
 }; // 회원가입
