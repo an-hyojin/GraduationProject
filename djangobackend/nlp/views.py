@@ -195,13 +195,14 @@ def makeData(json):
         b_count = 0
         c_count = 0
         sentence_index = 0
-        
+        isIn = True
+
         #가사 센텐스 # 가사 짜른거 센텐스 단위 # 가사 짜른거 2 2 1  #파파고 센텐스단위 번역본 
-        for line in json_elements['Lyrics'].split("\n"):
+        for line in re.split("\n+",json_elements['Lyrics']):
             if len(line.strip())==0:
                 continue
             sentences.append(line)
-            translation.append(papago(line))
+            
             trans = []
             word_index=0
             pos_info =[]
@@ -221,6 +222,11 @@ def makeData(json):
                             c_quiz_info.append(quiz)
                 trans.append(papago(stem[0]))
                 word_index+=1
+            trans_sentence = papago(line)
+            if trans_sentence=="번역 실패":
+                isIn = False
+                break
+            translation.append(trans_sentence)
             morphs = okt.morphs(line)
             morphs_list.append(morphs)
             morphs_trans.append(trans)
@@ -234,8 +240,9 @@ def makeData(json):
             c_list.append(temp_c)
             count_list.append(add_counts_array(line, morphs))
             sentence_index +=1
-        song_obj = Song(json_elements['Singer'], json_elements['Title'], albumLink, sentences, morphs_list,pos_list, count_list, a_count, b_count, c_count, a_list, b_list, c_list, translation, morphs_trans, a_quiz_info,b_quiz_info,c_quiz_info)
-        result.append(SongSerializer(song_obj).data)
+        if isIn:
+            song_obj = Song(json_elements['Singer'], json_elements['Title'], albumLink, sentences, morphs_list,pos_list, count_list, a_count, b_count, c_count, a_list, b_list, c_list, translation, morphs_trans, a_quiz_info,b_quiz_info,c_quiz_info)
+            result.append(SongSerializer(song_obj).data)
     return result
 
 
@@ -332,13 +339,12 @@ def papago(lyric):
 
     
 
-def isHangel(str): # 한글이 몇 퍼센트의 비율로 들어가있는지 판단
+def isHangel(line): # 한글이 몇 퍼센트의 비율로 들어가있는지 판단
     pattern = re.compile('[가-힣]+')
     #  \n과 \s+ 제거
-    lyrics = re.sub('\n',' ', str)
-    lyrics = re.sub('\s+',' ',lyrics)
+    lyrics = re.sub('\n+',' ', line)
     
-    lyricArray = re.split(' ', lyrics)
+    lyricArray = re.split('\s+', lyrics)
     hangel = 0
     for eachlyric in lyricArray:
         if bool(re.search(pattern, eachlyric)): # 한글 단어일 경우

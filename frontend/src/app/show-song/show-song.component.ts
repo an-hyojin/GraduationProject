@@ -51,6 +51,8 @@ export class ShowSongComponent implements OnInit {
         }
         this.songslice.push(shows);
       }
+    }, error=>{
+      this.router.navigate(['/main']);
     });
     this.userName = 'USER1';
   }
