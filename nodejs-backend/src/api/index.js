@@ -25,7 +25,9 @@ var end = new Promise(function (resolve, reject) {
       results.push(data)
      )
     .on("end", async () => {
+      console.log(results.length)
       resolve(results);
+      
     });
     
 });
@@ -54,7 +56,8 @@ api.get("/temp", async (ctx, next) => {
   let results = await end;
   let body = [];
   ctx.body = "호출";
-  for (i = 111; i < 113; i++) {
+  
+  for (i = 158; i < 168; i++) {
     console.log(i, results[i].Title)
     body.push(results[i]);
   }
