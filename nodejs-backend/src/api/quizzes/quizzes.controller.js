@@ -62,7 +62,7 @@ exports.quiz = async (ctx, next) => {
     sentence_quiz = [];
     while (sentence_quiz.length < 2) {
       let index = Math.floor(Math.random() * song.morphs.length);
-
+      
       if (quiz_index.includes(index)) continue;
       quiz_index.push(index);
       if (song.morphs[index].length <= 2) continue;
@@ -71,12 +71,15 @@ exports.quiz = async (ctx, next) => {
       item.trans = song.translation[index];
       item.morphs = song.morphs[index];
       item.sentence = song.sentences[index];
+      console.log(index)
       sentence_quiz.push(item);
+      
     }
+    console.log(sentence_quiz)
     allquiz.title = song.title;
     allquiz.singer = song.singer;
     allquiz.sentence_quiz = sentence_quiz;
-
+   
     ctx.body = allquiz;
   } catch (e) {
     return ctx.throw(500, e);
@@ -106,6 +109,7 @@ async function makeQuiz(quiz_info, song) {
   }
   if (otherwords.length > 3) otherwords.shift();
   quiz.example = otherwords;
+
   return quiz;
 }
 
@@ -114,7 +118,7 @@ exports.quiz_res = async (ctx, next) => {
   ctx.body = ctx.request.body;
   const { songId, userId, a, b, c } = ctx.request.body;
   await Song.findOneAndUpdate({ _id: songId }, { $inc: { count: 1 } });
-  // ctx.body = song;
+
 
   await User.findOneAndUpdate(
     { _id: userId },

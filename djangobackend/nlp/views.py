@@ -112,11 +112,8 @@ def recommendSongs(request, id):
 
     user = _userdb.find_one({'_id':ObjectId(id) }, projection={'_id':False,'learning':True, 'favorite':True, 'a':True ,'b':True, 'c':True})
     learn = []
-    if 'learning' in user:
-        for item in user['learning'][-10:]:
-            learn.append(item['learning'])
-    
-    if len(learn)<=10 and 'favorite' in user:
+   
+    if 'favorite' in user:
         user_favorite = _songdb.find({'singer':{'$in':user['favorite']}},projection={'_id':True, 'singer':True})
         singer = set()
         for favorite_song in user_favorite:
@@ -124,8 +121,14 @@ def recommendSongs(request, id):
                 favorite_song_id = str(favorite_song['_id'])
                 learn.append(favorite_song_id)
                 singer.add(favorite_song['singer'])
-        
-    learn.reverse()
+    
+    if 'learning' in user:
+        for item in user['learning'][-10:]:
+            learn.append(item['learning'])
+
+    
+    learn = learn[-10:]
+    print(learn[0])
     history_frame = pd.DataFrame(index=item_based_collabor.index, columns=['recommend']).fillna(0)
     
     weight = 1
@@ -136,7 +139,6 @@ def recommendSongs(request, id):
         song_similar_frame.loc[songId]['recommend']=0
         history_frame +=song_similar_frame*weight
         weight -= 0.1
-    
     history_frame = history_frame['recommend'].sort_values(ascending=False)[:12]
 
     user_a = user['a']
@@ -146,22 +148,24 @@ def recommendSongs(request, id):
 
     recommend_id = []
     clusterSong = None
-
+    
     if(all_count!=0):
         user_a = user_a/all_count
         user_b = user_b/all_count
         user_c = user_c/all_count
     else:
-        user_a = 0.33
-        user_b = 0.33
-        user_c = 0.34
+        recommend_id = list(map(lambda objid: str(objid),history_frame.index))
+        if str(learn[0]) in recommend_id:
+            recommend_id.remove(str(learn[0]))
+        return Response(recommend_id[:12])
 
     user_cluster_num = _model.predict([[user_a, user_b,user_c]])[0]
     clusterSong = _kmeansCluster[_kmeansCluster['clusterNum']==user_cluster_num].index
        
     for songId in history_frame.index:
-        if _kmeansCluster.loc[songId,'clusterNum']== user_cluster_num:
+        if _kmeansCluster.loc[songId,'clusterNum'] == user_cluster_num:
             recommend_id.append(songId)
+    
     
     if len(recommend_id)<4:
         recommend_id = list(map(lambda objid: str(objid),history_frame.index))
@@ -169,7 +173,9 @@ def recommendSongs(request, id):
     if len(recommend_id)<4:
         recommend_id = list(map(lambda objid: str(objid),clusterSong))
     
-    
+    if str(learn[0]) in recommend_id:
+        recommend_id.remove(str(learn[0]))
+
 
     return Response(recommend_id[:12])
 
